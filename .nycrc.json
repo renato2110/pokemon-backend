@@ -1,0 +1,20 @@
+{
+    "extension": [
+        ".ts"
+    ],
+    "exclude": [
+        "dist/**",
+        "coverage/**",
+        "src/unit-tests/**",
+        "src/index.ts",
+        "src/routes/**"
+    ],
+    "reporter": [
+        "text-summary",
+        "lcov"
+    ],
+    "report-dir": "coverage",
+    "all": true,
+    "lines": 80,
+    "check-coverage": true
+}

@@ -1,0 +1,2 @@
+(11/24/2023, 11:19:54 PM) REQUEST: {"url":"/pokemon/iniciar","method":"PUT","body":{"name":"Charizard","type":"agua","life":200,"id":7,"attacks":[{"type":"fuego","power":100},{"type":"agua","power":80},{"type":"normal","power":20},{"type":"planta","power":80}]}}
+(11/24/2023, 11:19:54 PM) RESPONSE: {"status":"success","message":"Charizard attributes set successfully."}
