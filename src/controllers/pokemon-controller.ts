@@ -11,7 +11,11 @@ import { logResponse } from "../helpers/logger";
 import { PokemonService } from "../services/pokemon-service";
 
 export class PokemonController {
-
+  /**
+   * Gets the current information about the Pokemon.
+   * @param {Request} _req - Express request object.
+   * @param {Response} res - Express response object.
+   */
   static async getPokemonInfo(_req: Request, res: Response) {
     const pokemon = PokemonService.getPokemon();
     const status = PokemonService.getPokemonStatus();
@@ -21,6 +25,15 @@ export class PokemonController {
     });
   }
 
+  /**
+   * Sets the attributes about the Pokemon.
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {string} req.body.name - New Pokemon name.
+   * @param {PokemonType} req.body.type - New Pokemon type.
+   * @param {number} req.body.life - New Pokemon life.
+   * @param {PokemonAttack[]} req.body.attacks - New Pokemon attacks.
+   */
   static async setPokemonAttributes(req: Request, res: Response) {
     try {
       await SavePokemonSchema.validate(req.body, { strict: true });
@@ -41,11 +54,18 @@ export class PokemonController {
     }
   }
 
+  /**
+   * Edits the life of the Pokemon.
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {number} req.body.life - New Pokemon life.
+   */
   static async editPokemonLife(req: Request, res: Response) {
     try {
       await EditPokemonLifeSchema.validate(req.body, { strict: true });
 
-      if (req.body.life === 0) PokemonService.setPokemonStatus(PokemonStatus.Defeated);
+      if (req.body.life === 0)
+        PokemonService.setPokemonStatus(PokemonStatus.Defeated);
       PokemonService.setPokemonLife(req.body.life);
       logResponse(res, true, "Pokemon life has been modified.");
     } catch (error: any) {
@@ -53,16 +73,28 @@ export class PokemonController {
     }
   }
 
+  /**
+   * Gets the information about the current enemies of the Pokemon.
+   * @param {Request} _req - Express request object.
+   * @param {Response} res - Express response object.
+   */
   static async getPokemonEnemies(_req: Request, res: Response) {
     const enemies = PokemonService.getPokemonEnemies();
     logResponse(res, true, "", enemies);
   }
 
+  /**
+   * Sends an attack from the Pokemon to an enemy. And move the Pokemon to in-battle status.
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {number} req.body.pokemonId - Id of a specific Pokemon enemy.
+   * @param {number} req.body.attackId - Number of a specific current attack.
+   */
   static async sendPokemonAttack(req: Request, res: Response) {
     try {
       await SendPokemonAttackSchema.validate(req.body, { strict: true });
 
-     const status = PokemonService.getPokemonStatus();
+      const status = PokemonService.getPokemonStatus();
       if (status !== PokemonStatus.Attacking) {
         logResponse(
           res,
@@ -73,9 +105,7 @@ export class PokemonController {
         const { attackId, pokemonId } = req.body;
         const attacks = PokemonService.getPokemonAttacks();
         const enemies = PokemonService.getPokemonEnemies();
-        const pokemon = enemies?.find(
-          (pokemon) => pokemon.id === pokemonId
-        );
+        const pokemon = enemies?.find((pokemon) => pokemon.id === pokemonId);
 
         if (attacks && attacks.length >= attackId && pokemon) {
           PokemonService.setPokemonStatus(PokemonStatus.InBattle);
@@ -92,6 +122,11 @@ export class PokemonController {
     }
   }
 
+  /**
+   * Initializes a new turn in the battle. And move the Pokemon to attacking status.
+   * @param {Request} _req - Express request object.
+   * @param {Response} res - Express response object.
+   */
   static async initializeTurn(_req: Request, res: Response) {
     const status = PokemonService.getPokemonStatus();
     if (status !== PokemonStatus.InBattle) {
@@ -102,6 +137,12 @@ export class PokemonController {
     }
   }
 
+  /**
+   * Finishes the current battle. And move the Pokemon to available status.
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {boolean} req.body.victory - Final battle result.
+   */
   static async finishBattle(req: Request, res: Response) {
     try {
       await FinishBattleSchema.validate(req.body, { strict: true });
@@ -118,6 +159,21 @@ export class PokemonController {
       }
     } catch (error: any) {
       logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
+    }
+  }
+
+  /**
+   * Adds the current Pokemon to the battle. And move the Pokemon to in-battle status.
+   * @param {Request} _req - Express request.
+   * @param {Response} res - Express response object.
+   */
+  static async addToBattle(_req: Request, res: Response) {
+    const status = PokemonService.getPokemonStatus();
+    if (status !== PokemonStatus.Available) {
+      logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
+    } else {
+      PokemonService.setPokemonStatus(PokemonStatus.InBattle);
+      logResponse(res, true, "Pokemon added to battle successfully.");
     }
   }
 }

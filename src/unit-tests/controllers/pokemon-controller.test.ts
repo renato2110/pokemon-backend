@@ -363,4 +363,35 @@ describe("PokemonController", () => {
       });
     });
   });
+
+  describe("addToBattle", () => {
+    it("should handle error when the Pokemon is not available", async () => {
+      Context.STATUS = PokemonStatus.InBattle;
+      const req = {} as Request;
+
+      await PokemonController.addToBattle(req, res).then(() => {
+        assert.calledOnceWithExactly(
+          logResponseStub,
+          res,
+          false,
+          `Error adding to battle. Pokemon is: ${PokemonStatus.InBattle}.`
+        );
+      });
+    });
+
+    it("should set Pokemon status as in battle", async () => {
+      Context.STATUS = PokemonStatus.Available;
+      const req = {} as Request;
+
+      await PokemonController.addToBattle(req, res).then(() => {
+        assert.calledOnceWithExactly(
+          logResponseStub,
+          res,
+          true,
+          "Pokemon added to battle successfully."
+        );
+        expect(Context.STATUS).to.be.equal(PokemonStatus.InBattle);
+      });
+    });
+  });
 });

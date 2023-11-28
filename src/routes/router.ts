@@ -15,3 +15,4 @@ router.post('/pokemon/atacar', logger.logRequest(), PokemonController.sendPokemo
 router.post('/pokemon/iniciar-turno', logger.logRequest(), PokemonController.initializeTurn);
 router.post('/pokemon/editar-vida', logger.logRequest(), PokemonController.editPokemonLife);
 router.post('/pokemon/terminar-partida', logger.logRequest(), PokemonController.finishBattle);
+router.post('/pokemon/unirse-a-partida', logger.logRequest(), PokemonController.addToBattle);

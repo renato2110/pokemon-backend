@@ -542,6 +542,64 @@
           }
         }
       }
-    }
+    },
+    "/pokemon/unirse-a-partida": {
+      "post": {
+        "tags": [
+          "Battle"
+        ],
+        "summary": "Add Pokemon to Pokemon Gym",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Pokemon added to battle successfully."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response when the Pokemon status is not 'disponible'",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "message": {
+                  "type": "array",
+                  "example": "Error adding to battle. Pokemon is: en-batlla"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
   }
 }
