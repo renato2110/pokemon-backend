@@ -10,13 +10,49 @@ import {
   PokemonType,
 } from "../../common/models/pokemon-model";
 import { expect } from "chai";
+import { ResponseLogObject } from "../../common/models/request-model";
+import { ERROR } from "../../common/constants/text-constants";
+
+
+describe("logResponse", () => {
+  let writeLogStub: SinonStub;
+
+  beforeEach(() => {
+    writeLogStub = stub(loggerHelper, "writeLog");
+  });
+
+  afterEach(() => {
+    writeLogStub.restore();
+  });
+
+  it("should send a successful response and write to log", async () => {
+    const response: ResponseLogObject = {
+      status: ERROR,
+      message: "Test message",
+      data: { data: "test" },
+    };
+    const res: Response = {
+      status: stub().returnsThis(),
+      send: stub(),
+    } as unknown as Response;
+
+    await PokemonController.logResponse(res, false, "Test message", {
+      data: "test",
+    }).then(() => {
+      assert.calledOnceWithExactly(
+        writeLogStub,
+        `RESPONSE: ${JSON.stringify(response)}`
+      );
+    });
+  });
+});
 
 describe("PokemonController", () => {
   let logResponseStub: SinonStub;
   const res = {} as Response;
 
   beforeEach(() => {
-    logResponseStub = stub(loggerHelper, "logResponse");
+    logResponseStub = stub(PokemonController, "logResponse");
   });
 
   afterEach(() => {
@@ -25,6 +61,7 @@ describe("PokemonController", () => {
 
   describe("getPokemonInfo", () => {
     it("should return Pokemon information", async () => {
+      // GIVEN
       Context.POKEMON = {
         id: 0,
         name: "Sin nombre",
@@ -35,7 +72,9 @@ describe("PokemonController", () => {
       Context.STATUS = PokemonStatus.Available;
       const req = {} as Request;
 
+      // WHEN
       await PokemonController.getPokemonInfo(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(logResponseStub, res, true, "", {
           ...Context.POKEMON,
           status: Context.STATUS,
@@ -160,13 +199,15 @@ describe("PokemonController", () => {
   describe("getPokemonEnemies", () => {
     it("should return Pokemon enemies information", async () => {
       const req = {} as Request;
-      Context.ENEMIES = [{
-        id: 0,
-        name: "Sin nombre",
-        type: PokemonType.Normal,
-        life: 0,
-        attacks: [],
-      }];
+      Context.ENEMIES = [
+        {
+          id: 0,
+          name: "Sin nombre",
+          type: PokemonType.Normal,
+          life: 0,
+          attacks: [],
+        },
+      ];
 
       await PokemonController.getPokemonEnemies(req, res).then(() => {
         assert.calledOnceWithExactly(
@@ -314,8 +355,8 @@ describe("PokemonController", () => {
       Context.STATUS = PokemonStatus.InBattle;
       const req = {
         body: {
-          victory: false
-        }
+          victory: false,
+        },
       } as Request;
 
       await PokemonController.finishBattle(req, res).then(() => {
@@ -334,8 +375,8 @@ describe("PokemonController", () => {
       Context.STATUS = PokemonStatus.Available;
       const req = {
         body: {
-          victory: false
-        }
+          victory: false,
+        },
       } as Request;
 
       await PokemonController.finishBattle(req, res).then(() => {

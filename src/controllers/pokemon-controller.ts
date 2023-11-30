@@ -5,12 +5,33 @@ import {
   SavePokemonSchema,
   SendPokemonAttackSchema,
 } from "../validators/pokemon-validator";
-import { VALIDATION_ERROR } from "../common/constants/text-constants";
+import { ERROR, SUCCESS, VALIDATION_ERROR } from "../common/constants/text-constants";
 import { PokemonStatus } from "../common/models/pokemon-model";
-import { logResponse } from "../helpers/logger";
 import { PokemonService } from "../services/pokemon-service";
+import { ResponseLogObject } from "../common/models/request-model";
+import { writeLog } from "../helpers/logger";
 
 export class PokemonController {
+  /**
+   * Creates a new response message to be stored.
+   * @param {Response} res - Express response object.
+   * @param {boolean} success - Used to determine the response status.
+   * @param {string} message - Message to be send to the user.
+   * @param {Object} data - Data to be send to the user (optional).
+   */
+  static async logResponse(res: Response, success: boolean, message: string, data?: object) {
+    let response: ResponseLogObject = {
+      status: success ? SUCCESS : ERROR,
+      message: message,
+    };
+    if (data) response.data = data;
+    const status = success ? 200 : 400;
+
+    res.status(status).send(response);
+    
+    await writeLog(`RESPONSE: ${JSON.stringify(response)}`);
+  };
+
   /**
    * Gets the current information about the Pokemon.
    * @param {Request} _req - Express request object.
@@ -19,7 +40,7 @@ export class PokemonController {
   static async getPokemonInfo(_req: Request, res: Response) {
     const pokemon = PokemonService.getPokemon();
     const status = PokemonService.getPokemonStatus();
-    logResponse(res, true, "", {
+    PokemonController.logResponse(res, true, "", {
       ...pokemon,
       status,
     });
@@ -40,17 +61,17 @@ export class PokemonController {
 
       const status = PokemonService.getPokemonStatus();
       if (status !== PokemonStatus.Available) {
-        logResponse(
+        PokemonController.logResponse(
           res,
           false,
           `Pokemon attributes cannot be set because it is in a battle.`
         );
       } else {
         PokemonService.setPokemon(req.body);
-        logResponse(res, true, `${req.body.name} attributes set successfully.`);
+        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
+      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
     }
   }
 
@@ -67,9 +88,9 @@ export class PokemonController {
       if (req.body.life === 0)
         PokemonService.setPokemonStatus(PokemonStatus.Defeated);
       PokemonService.setPokemonLife(req.body.life);
-      logResponse(res, true, "Pokemon life has been modified.");
+      PokemonController.logResponse(res, true, "Pokemon life has been modified.");
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
+      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
     }
   }
 
@@ -80,7 +101,7 @@ export class PokemonController {
    */
   static async getPokemonEnemies(_req: Request, res: Response) {
     const enemies = PokemonService.getPokemonEnemies();
-    logResponse(res, true, "", enemies);
+    PokemonController.logResponse(res, true, "", enemies);
   }
 
   /**
@@ -96,7 +117,7 @@ export class PokemonController {
 
       const status = PokemonService.getPokemonStatus();
       if (status !== PokemonStatus.Attacking) {
-        logResponse(
+        PokemonController.logResponse(
           res,
           false,
           `Pokemon is not ${PokemonStatus.Attacking}. Pokemon is: '${status}'.`
@@ -109,16 +130,16 @@ export class PokemonController {
 
         if (attacks && attacks.length >= attackId && pokemon) {
           PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-          logResponse(res, true, "Pokemon Attack send successfully.", {
+          PokemonController.logResponse(res, true, "Pokemon Attack send successfully.", {
             attack: attacks[attackId - 1],
             pokemon,
           });
         } else {
-          logResponse(res, false, "Pokemon or Attack not valid.");
+          PokemonController.logResponse(res, false, "Pokemon or Attack not valid.");
         }
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
+      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
     }
   }
 
@@ -130,10 +151,10 @@ export class PokemonController {
   static async initializeTurn(_req: Request, res: Response) {
     const status = PokemonService.getPokemonStatus();
     if (status !== PokemonStatus.InBattle) {
-      logResponse(res, false, `Error initializing turn. Pokemon is: ${status}`);
+      PokemonController.logResponse(res, false, `Error initializing turn. Pokemon is: ${status}`);
     } else {
       PokemonService.setPokemonStatus(PokemonStatus.Attacking);
-      logResponse(res, true, "Turn initialized successfully.");
+      PokemonController.logResponse(res, true, "Turn initialized successfully.");
     }
   }
 
@@ -151,14 +172,14 @@ export class PokemonController {
         status !== PokemonStatus.InBattle &&
         status !== PokemonStatus.Defeated
       ) {
-        logResponse(res, false, `Error resting Pokemon. Pokemon is: ${status}`);
+        PokemonController.logResponse(res, false, `Error resting Pokemon. Pokemon is: ${status}`);
       } else {
         PokemonService.setPokemonStatus(PokemonStatus.Available);
         PokemonService.setPokemonEnemies([]);
-        logResponse(res, true, "Pokemon has been reset.");
+        PokemonController.logResponse(res, true, "Pokemon has been reset.");
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
+      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
     }
   }
 
@@ -170,10 +191,10 @@ export class PokemonController {
   static async addToBattle(_req: Request, res: Response) {
     const status = PokemonService.getPokemonStatus();
     if (status !== PokemonStatus.Available) {
-      logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
+      PokemonController.logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
     } else {
       PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-      logResponse(res, true, "Pokemon added to battle successfully.");
+      PokemonController.logResponse(res, true, "Pokemon added to battle successfully.");
     }
   }
 }

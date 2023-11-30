@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>60/60</span>
+                <span class='fraction'>66/66</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.48% </span>
+                <span class="strong">75.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>22/27</span>
+                <span class='fraction'>25/33</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>59/59</span>
+                <span class='fraction'>64/64</span>
             </div>
         
             
@@ -242,7 +242,28 @@
 <a name='L177'></a><a href='#L177'>177</a>
 <a name='L178'></a><a href='#L178'>178</a>
 <a name='L179'></a><a href='#L179'>179</a>
-<a name='L180'></a><a href='#L180'>180</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -252,9 +273,30 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -428,12 +470,33 @@ import {
   SavePokemonSchema,
   SendPokemonAttackSchema,
 } from "../validators/pokemon-validator";
-import { VALIDATION_ERROR } from "../common/constants/text-constants";
+import { ERROR, SUCCESS, VALIDATION_ERROR } from "../common/constants/text-constants";
 import { PokemonStatus } from "../common/models/pokemon-model";
-import { logResponse } from "../helpers/logger";
 import { PokemonService } from "../services/pokemon-service";
+import { ResponseLogObject } from "../common/models/request-model";
+import { writeLog } from "../helpers/logger";
 &nbsp;
 export class PokemonController {
+  /**
+   * Creates a new response message to be stored.
+   * @param {Response} res - Express response object.
+   * @param {boolean} success - Used to determine the response status.
+   * @param {string} message - Message to be send to the user.
+   * @param {Object} data - Data to be send to the user (optional).
+   */
+  static async logResponse(res: Response, success: boolean, message: string, data?: object) {
+    let response: ResponseLogObject = {
+      status: success ? <span class="branch-0 cbranch-no" title="branch not covered" >SUCCESS </span>: ERROR,
+      message: message,
+    };
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (data) response.data = data;
+    const status = success ? <span class="branch-0 cbranch-no" title="branch not covered" >200 </span>: 400;
+&nbsp;
+    res.status(status).send(response);
+    
+    await writeLog(`RESPONSE: ${JSON.stringify(response)}`);
+  };
+&nbsp;
   /**
    * Gets the current information about the Pokemon.
    * @param {Request} _req - Express request object.
@@ -442,7 +505,7 @@ export class PokemonController {
   static async getPokemonInfo(_req: Request, res: Response) {
     const pokemon = PokemonService.getPokemon();
     const status = PokemonService.getPokemonStatus();
-    logResponse(res, true, "", {
+    PokemonController.logResponse(res, true, "", {
       ...pokemon,
       status,
     });
@@ -463,17 +526,17 @@ export class PokemonController {
 &nbsp;
       const status = PokemonService.getPokemonStatus();
       if (status !== PokemonStatus.Available) {
-        logResponse(
+        PokemonController.logResponse(
           res,
           false,
           `Pokemon attributes cannot be set because it is in a battle.`
         );
       } else {
         PokemonService.setPokemon(req.body);
-        logResponse(res, true, `${req.body.name} attributes set successfully.`);
+        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
+      PokemonController.logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
     }
   }
 &nbsp;
@@ -490,9 +553,9 @@ export class PokemonController {
       <span class="missing-if-branch" title="else path not taken" >E</span>if (req.body.life === 0)
         PokemonService.setPokemonStatus(PokemonStatus.Defeated);
       PokemonService.setPokemonLife(req.body.life);
-      logResponse(res, true, "Pokemon life has been modified.");
+      PokemonController.logResponse(res, true, "Pokemon life has been modified.");
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
+      PokemonController.logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
     }
   }
 &nbsp;
@@ -503,7 +566,7 @@ export class PokemonController {
    */
   static async getPokemonEnemies(_req: Request, res: Response) {
     const enemies = PokemonService.getPokemonEnemies();
-    logResponse(res, true, "", enemies);
+    PokemonController.logResponse(res, true, "", enemies);
   }
 &nbsp;
   /**
@@ -519,7 +582,7 @@ export class PokemonController {
 &nbsp;
       const status = PokemonService.getPokemonStatus();
       if (status !== PokemonStatus.Attacking) {
-        logResponse(
+        PokemonController.logResponse(
           res,
           false,
           `Pokemon is not ${PokemonStatus.Attacking}. Pokemon is: '${status}'.`
@@ -532,16 +595,16 @@ export class PokemonController {
 &nbsp;
         if (attacks &amp;&amp; attacks.length &gt;= attackId &amp;&amp; pokemon) {
           PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-          logResponse(res, true, "Pokemon Attack send successfully.", {
+          PokemonController.logResponse(res, true, "Pokemon Attack send successfully.", {
             attack: attacks[attackId - 1],
             pokemon,
           });
         } else {
-          logResponse(res, false, "Pokemon or Attack not valid.");
+          PokemonController.logResponse(res, false, "Pokemon or Attack not valid.");
         }
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
+      PokemonController.logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
     }
   }
 &nbsp;
@@ -553,10 +616,10 @@ export class PokemonController {
   static async initializeTurn(_req: Request, res: Response) {
     const status = PokemonService.getPokemonStatus();
     if (status !== PokemonStatus.InBattle) {
-      logResponse(res, false, `Error initializing turn. Pokemon is: ${status}`);
+      PokemonController.logResponse(res, false, `Error initializing turn. Pokemon is: ${status}`);
     } else {
       PokemonService.setPokemonStatus(PokemonStatus.Attacking);
-      logResponse(res, true, "Turn initialized successfully.");
+      PokemonController.logResponse(res, true, "Turn initialized successfully.");
     }
   }
 &nbsp;
@@ -574,14 +637,14 @@ export class PokemonController {
         status !== PokemonStatus.InBattle &amp;&amp;
         status !== PokemonStatus.Defeated
       ) {
-        logResponse(res, false, `Error resting Pokemon. Pokemon is: ${status}`);
+        PokemonController.logResponse(res, false, `Error resting Pokemon. Pokemon is: ${status}`);
       } else {
         PokemonService.setPokemonStatus(PokemonStatus.Available);
         PokemonService.setPokemonEnemies([]);
-        logResponse(res, true, "Pokemon has been reset.");
+        PokemonController.logResponse(res, true, "Pokemon has been reset.");
       }
     } catch (error: any) {
-      logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
+      PokemonController.logResponse(res, false, error.errors[0] || <span class="branch-1 cbranch-no" title="branch not covered" >VALIDATION_ERROR)</span>;
     }
   }
 &nbsp;
@@ -593,10 +656,10 @@ export class PokemonController {
   static async addToBattle(_req: Request, res: Response) {
     const status = PokemonService.getPokemonStatus();
     if (status !== PokemonStatus.Available) {
-      logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
+      PokemonController.logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
     } else {
       PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-      logResponse(res, true, "Pokemon added to battle successfully.");
+      PokemonController.logResponse(res, true, "Pokemon added to battle successfully.");
     }
   }
 }
@@ -607,7 +670,7 @@ export class PokemonController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-28T06:10:56.755Z
+                at 2023-11-30T01:01:02.023Z
             </div>
         <script src="../prettify.js"></script>
         <script>

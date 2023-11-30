@@ -1,26 +1,32 @@
-(11/24/2023, 11:19:54 PM) REQUEST: {"url":"/pokemon/iniciar","method":"PUT","body":{"name":"Charizard","type":"agua","life":200,"id":7,"attacks":[{"type":"fuego","power":100},{"type":"agua","power":80},{"type":"normal","power":20},{"type":"planta","power":80}]}}
-(11/24/2023, 11:19:54 PM) RESPONSE: {"status":"success","message":"Charizard attributes set successfully."}
-(11/27/2023, 8:46:40 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:46:40 PM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
-(11/27/2023, 8:46:40 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:46:40 PM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
-(11/27/2023, 8:46:43 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:46:43 PM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
-(11/27/2023, 8:46:43 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:46:43 PM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
-(11/27/2023, 8:46:46 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:46:46 PM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
-(11/27/2023, 8:46:46 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:46:46 PM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
-(11/27/2023, 8:46:49 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:46:49 PM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
-(11/27/2023, 8:46:49 PM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
-(11/27/2023, 8:46:49 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:46:58 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:46:58 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:47:01 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:47:01 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:47:04 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:47:04 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
-(11/27/2023, 8:47:07 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
-(11/27/2023, 8:47:07 PM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:38 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:38 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:38 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:38 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:41 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:41 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:41 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:41 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:44 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:44 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:44 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:44 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:47 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:47 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:47 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:47 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:50 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:50 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:50 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:50 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:53 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:53 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:53 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:53 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:56 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:56 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:56 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:56 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
+(11/28/2023, 3:03:59 AM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(11/28/2023, 3:03:59 AM) RESPONSE: {"status":"success","message":"","data":{"id":0,"name":"Sin nombre","type":"normal","life":0,"attacks":[],"status":"disponible"}}
+(11/28/2023, 3:03:59 AM) REQUEST: {"url":"/pokemon/enemigos","method":"GET","params":{}}
+(11/28/2023, 3:03:59 AM) RESPONSE: {"status":"success","message":"","data":[{"id":4,"name":"Blastoise","type":"agua","life":1000},{"id":7,"name":"Venasaur","type":"planta","life":1000},{"id":9,"name":"Nidoran","type":"normal","life":1000}]}
