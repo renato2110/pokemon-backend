@@ -13,7 +13,6 @@ import { expect } from "chai";
 import { ResponseLogObject } from "../../common/models/request-model";
 import { ERROR } from "../../common/constants/text-constants";
 
-
 describe("logResponse", () => {
   let writeLogStub: SinonStub;
 
@@ -70,69 +69,79 @@ describe("PokemonController", () => {
         attacks: [],
       };
       Context.STATUS = PokemonStatus.Available;
+      Context.PLAYER = "Renato";
       const req = {} as Request;
 
       // WHEN
       await PokemonController.getPokemonInfo(req, res).then(() => {
         // THEN
         assert.calledOnceWithExactly(logResponseStub, res, true, "", {
-          ...Context.POKEMON,
+          pokemon: Context.POKEMON,
           status: Context.STATUS,
+          player: Context.PLAYER,
         });
       });
     });
   });
 
   describe("setPokemonAttributes", () => {
-    const pokemonBody = {
-      name: "Charizard",
-      type: "agua",
-      life: 200,
-      id: 7,
-      attacks: [
-        {
-          type: "fuego",
-          power: 100,
-        },
-        {
-          type: "agua",
-          power: 80,
-        },
-        {
-          type: "normal",
-          power: 20,
-        },
-        {
-          type: "planta",
-          power: 80,
-        },
-      ],
+    const body = {
+      pokemon: {
+        name: "Charizard",
+        type: "agua",
+        life: 200,
+        id: 7,
+        attacks: [
+          {
+            type: "fuego",
+            power: 100,
+          },
+          {
+            type: "agua",
+            power: 80,
+          },
+          {
+            type: "normal",
+            power: 20,
+          },
+          {
+            type: "planta",
+            power: 80,
+          },
+        ],
+      },
+      player: "Renato",
     };
 
     it("should set Pokemon attributes successfully", async () => {
+      // GIVEN
       const req = {
-        body: pokemonBody,
+        body,
       } as Request;
-
       Context.STATUS = PokemonStatus.Available;
 
+      // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
           true,
-          `${req.body.name} attributes set successfully.`
+          `${req.body.pokemon.name} attributes set successfully.`
         );
-        expect(Context.POKEMON).to.be.equal(pokemonBody);
+        expect(Context.POKEMON).to.be.equal(body.pokemon);
+        expect(Context.PLAYER).to.be.equal(body.player);
       });
     });
 
     it("should handle error when setting Pokemon attributes during battle", async () => {
-      const req = { body: pokemonBody } as Request;
-
+      // GIVEN
+      const req = { body: body } as Request;
       Context.STATUS = PokemonStatus.InBattle;
 
+      // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -152,7 +161,7 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           false,
-          "attacks is a required field"
+          "pokemon is a required field"
         );
       });
     });
@@ -164,11 +173,14 @@ describe("PokemonController", () => {
     };
 
     it("should set Pokemon life successfully", async () => {
+      // GIVEN
       const req = {
         body: lifeBody,
       } as Request;
 
+      // WHEN
       await PokemonController.editPokemonLife(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -198,6 +210,7 @@ describe("PokemonController", () => {
 
   describe("getPokemonEnemies", () => {
     it("should return Pokemon enemies information", async () => {
+      // GIVEN
       const req = {} as Request;
       Context.ENEMIES = [
         {
@@ -209,7 +222,9 @@ describe("PokemonController", () => {
         },
       ];
 
+      // WHEN
       await PokemonController.getPokemonEnemies(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -235,12 +250,15 @@ describe("PokemonController", () => {
     };
 
     it("should handle error when the Pokemon is not attacking", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.InBattle;
       const req = {
         body: attackBody,
       } as Request;
 
+      // WHEN
       await PokemonController.sendPokemonAttack(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -251,12 +269,15 @@ describe("PokemonController", () => {
     });
 
     it("should handle error when the Pokemon attack or Pokemon enemy are not valid", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.Attacking;
       const req = {
         body: attackBody,
       } as Request;
 
+      // WHEN
       await PokemonController.sendPokemonAttack(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -267,6 +288,7 @@ describe("PokemonController", () => {
     });
 
     it("should return the Pokemon attack and Pokemon enemy successfully", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.Attacking;
       Context.ENEMIES = [enemy];
       Context.POKEMON = {
@@ -285,7 +307,9 @@ describe("PokemonController", () => {
         body: attackBody,
       } as Request;
 
+      // WHEN
       await PokemonController.sendPokemonAttack(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -304,11 +328,14 @@ describe("PokemonController", () => {
     });
 
     it("should handle validation error when sending Pokemon attack", async () => {
+      // GIVEN
       const req = {
         body: {},
       } as Request;
 
+      // WHEN
       await PokemonController.sendPokemonAttack(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -321,10 +348,13 @@ describe("PokemonController", () => {
 
   describe("initializeTurn", () => {
     it("should handle error when the Pokemon is not battling", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.Available;
       const req = {} as Request;
 
+      // WHEN
       await PokemonController.initializeTurn(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -335,10 +365,13 @@ describe("PokemonController", () => {
     });
 
     it("should set Pokemon status as attacking", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.InBattle;
       const req = {} as Request;
 
+      // WHEN
       await PokemonController.initializeTurn(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -352,6 +385,7 @@ describe("PokemonController", () => {
 
   describe("finishBattle", () => {
     it("should set Pokemon status as available", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.InBattle;
       const req = {
         body: {
@@ -359,7 +393,9 @@ describe("PokemonController", () => {
         },
       } as Request;
 
+      // WHEN
       await PokemonController.finishBattle(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -372,6 +408,7 @@ describe("PokemonController", () => {
     });
 
     it("should handle error when the Pokemon is not battling", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.Available;
       const req = {
         body: {
@@ -379,7 +416,9 @@ describe("PokemonController", () => {
         },
       } as Request;
 
+      // WHEN
       await PokemonController.finishBattle(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -390,11 +429,14 @@ describe("PokemonController", () => {
     });
 
     it("should handle validation error when finishing Pokemon battle", async () => {
+      // GIVEN
       const req = {
         body: {},
       } as Request;
 
+      // WHEN
       await PokemonController.finishBattle(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -407,10 +449,13 @@ describe("PokemonController", () => {
 
   describe("addToBattle", () => {
     it("should handle error when the Pokemon is not available", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.InBattle;
       const req = {} as Request;
 
+      // WHEN
       await PokemonController.addToBattle(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
@@ -421,10 +466,13 @@ describe("PokemonController", () => {
     });
 
     it("should set Pokemon status as in battle", async () => {
+      // GIVEN
       Context.STATUS = PokemonStatus.Available;
       const req = {} as Request;
 
+      // WHEN
       await PokemonController.addToBattle(req, res).then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,

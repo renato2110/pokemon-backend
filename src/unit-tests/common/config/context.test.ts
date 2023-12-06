@@ -3,11 +3,14 @@ import { PokemonStatus, PokemonType } from "../../../common/models/pokemon-model
 import { expect } from 'chai';
 import { Context } from '../../../common/config/context';
 
+// GIVEN
 describe('Context', () => {
+    // WHEN
     beforeEach(() => {
         Context.initialize();
     });
 
+    // THEN
     it('should initialize POKEMON with default values', () => {
         expect(Context.POKEMON.id).to.equal(0);
         expect(Context.POKEMON.name).to.equal('Sin nombre');

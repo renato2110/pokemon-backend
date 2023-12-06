@@ -23,10 +23,14 @@ describe("Logger Middleware", () => {
   });
 
   it("Should store the new GET request and their values", async () => {
+    // GIVEN
     const next = spy();
+
+    // WHEN
     logger
       .logRequest()(req, res, next)
       .then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           writeLogStub,
           `REQUEST: ${JSON.stringify(logObject)}\n`
@@ -35,11 +39,15 @@ describe("Logger Middleware", () => {
   });
 
   it("Should store the new POST request and their values", async () => {
+    // GIVEN
     const next = spy();
     req.method = "POST";
+
+    // WHEN
     logger
       .logRequest()(req, res, next)
       .then(() => {
+        // THEN
         assert.calledOnceWithExactly(
           writeLogStub,
           `REQUEST: ${JSON.stringify(logObject)}\n`

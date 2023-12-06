@@ -4,6 +4,7 @@ export class Context {
     static POKEMON: Pokemon;
     static ENEMIES: Pokemon[];
     static STATUS: PokemonStatus | undefined;
+    static PLAYER: string;
 
     static initialize() {
         Context.POKEMON = {
@@ -30,5 +31,6 @@ export class Context {
             life: 1000
         }];
         Context.STATUS = PokemonStatus.Available;
+        Context.PLAYER = 'Renato';
     }
 }

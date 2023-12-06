@@ -90,8 +90,8 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
-.nyc_output
-coverage
+/.nyc_output
+/coverage
 
 # Gatsby files
 .cache/

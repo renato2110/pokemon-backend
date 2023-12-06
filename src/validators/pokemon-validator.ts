@@ -12,10 +12,13 @@ const attackSchema = object().shape({
 });
 
 export const SavePokemonSchema = object().shape({
-    name: string().required(),
-    type: typeSchema,
-    life: lifeSchema,
-    attacks: array().of(attackSchema).min(1).max(4).required()
+    pokemon: object().shape({
+        name: string().required(),
+        type: typeSchema,
+        life: lifeSchema,
+        attacks: array().of(attackSchema).min(1).max(4).required(),
+    }).required(),
+    player: string()
 });
 
 export const EditPokemonLifeSchema = object().shape({

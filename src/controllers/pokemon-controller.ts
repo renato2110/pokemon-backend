@@ -38,12 +38,12 @@ export class PokemonController {
    * @param {Response} res - Express response object.
    */
   static async getPokemonInfo(_req: Request, res: Response) {
-    const pokemon = PokemonService.getPokemon();
-    const status = PokemonService.getPokemonStatus();
-    PokemonController.logResponse(res, true, "", {
-      ...pokemon,
-      status,
-    });
+    const data = {
+      pokemon: PokemonService.getPokemon(),
+      status: PokemonService.getPokemonStatus(),
+      player: PokemonService.getPokemonPlayer()
+    }
+    PokemonController.logResponse(res, true, "", data);
   }
 
   /**
@@ -67,8 +67,9 @@ export class PokemonController {
           `Pokemon attributes cannot be set because it is in a battle.`
         );
       } else {
-        PokemonService.setPokemon(req.body);
-        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
+        PokemonService.setPokemon(req.body.pokemon);
+        PokemonService.setPokemonPlayer(req.body.player);
+        PokemonController.logResponse(res, true, `${req.body.pokemon.name} attributes set successfully.`);
       }
     } catch (error: any) {
       PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
