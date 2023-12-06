@@ -12,7 +12,7 @@ describe('Context', () => {
 
     // THEN
     it('should initialize POKEMON with default values', () => {
-        expect(Context.POKEMON.id).to.equal(0);
+        expect(Context.POKEMON.player).to.equal('Renato');
         expect(Context.POKEMON.name).to.equal('Sin nombre');
         expect(Context.POKEMON.type).to.equal(PokemonType.Normal);
         expect(Context.POKEMON.life).to.equal(0);

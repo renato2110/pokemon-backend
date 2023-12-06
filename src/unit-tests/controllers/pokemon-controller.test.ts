@@ -62,23 +62,21 @@ describe("PokemonController", () => {
     it("should return Pokemon information", async () => {
       // GIVEN
       Context.POKEMON = {
-        id: 0,
+        player: "Renato",
         name: "Sin nombre",
         type: PokemonType.Normal,
         life: 0,
         attacks: [],
       };
       Context.STATUS = PokemonStatus.Available;
-      Context.PLAYER = "Renato";
       const req = {} as Request;
 
       // WHEN
       await PokemonController.getPokemonInfo(req, res).then(() => {
         // THEN
         assert.calledOnceWithExactly(logResponseStub, res, true, "", {
-          pokemon: Context.POKEMON,
+          ...Context.POKEMON,
           status: Context.STATUS,
-          player: Context.PLAYER,
         });
       });
     });
@@ -86,38 +84,34 @@ describe("PokemonController", () => {
 
   describe("setPokemonAttributes", () => {
     const body = {
-      pokemon: {
-        name: "Charizard",
-        type: "agua",
-        life: 200,
-        id: 7,
-        attacks: [
-          {
-            type: "fuego",
-            power: 100,
-          },
-          {
-            type: "agua",
-            power: 80,
-          },
-          {
-            type: "normal",
-            power: 20,
-          },
-          {
-            type: "planta",
-            power: 80,
-          },
-        ],
-      },
+      name: "Charizard",
       player: "Renato",
+      type: "agua",
+      life: 200,
+      id: 7,
+      attacks: [
+        {
+          type: "fuego",
+          power: 100,
+        },
+        {
+          type: "agua",
+          power: 80,
+        },
+        {
+          type: "normal",
+          power: 20,
+        },
+        {
+          type: "planta",
+          power: 80,
+        },
+      ],
     };
 
     it("should set Pokemon attributes successfully", async () => {
       // GIVEN
-      const req = {
-        body,
-      } as Request;
+      const req = { body } as Request;
       Context.STATUS = PokemonStatus.Available;
 
       // WHEN
@@ -127,16 +121,15 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           true,
-          `${req.body.pokemon.name} attributes set successfully.`
+          `${req.body.name} attributes set successfully.`
         );
-        expect(Context.POKEMON).to.be.equal(body.pokemon);
-        expect(Context.PLAYER).to.be.equal(body.player);
+        expect(Context.POKEMON).to.be.equal(body);
       });
     });
 
     it("should handle error when setting Pokemon attributes during battle", async () => {
       // GIVEN
-      const req = { body: body } as Request;
+      const req = { body } as Request;
       Context.STATUS = PokemonStatus.InBattle;
 
       // WHEN
@@ -161,48 +154,7 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           false,
-          "pokemon is a required field"
-        );
-      });
-    });
-  });
-
-  describe("editPokemonLife", () => {
-    const lifeBody = {
-      life: 0,
-    };
-
-    it("should set Pokemon life successfully", async () => {
-      // GIVEN
-      const req = {
-        body: lifeBody,
-      } as Request;
-
-      // WHEN
-      await PokemonController.editPokemonLife(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          true,
-          "Pokemon life has been modified."
-        );
-        expect(Context.POKEMON.life).to.be.equal(0);
-        expect(Context.STATUS).to.be.equal(PokemonStatus.Defeated);
-      });
-    });
-
-    it("should handle validation error when setting Pokemon attributes", async () => {
-      const req = {
-        body: {},
-      } as Request;
-
-      await PokemonController.editPokemonLife(req, res).then(() => {
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          false,
-          "life is a required field"
+          "attacks is a required field"
         );
       });
     });
@@ -214,7 +166,7 @@ describe("PokemonController", () => {
       const req = {} as Request;
       Context.ENEMIES = [
         {
-          id: 0,
+          player: "Renato",
           name: "Sin nombre",
           type: PokemonType.Normal,
           life: 0,
@@ -239,11 +191,11 @@ describe("PokemonController", () => {
   describe("sendPokemonAttack", () => {
     const attackBody = {
       attackId: 1,
-      pokemonId: 1,
+      targetPlayer: 'enemy',
     };
 
     const enemy: Pokemon = {
-      id: 1,
+      player: "enemy",
       name: "Blastoise",
       type: PokemonType.Water,
       life: 1000,
@@ -292,7 +244,7 @@ describe("PokemonController", () => {
       Context.STATUS = PokemonStatus.Attacking;
       Context.ENEMIES = [enemy];
       Context.POKEMON = {
-        id: 0,
+        player: "Renato",
         name: "Charizard",
         type: PokemonType.Fire,
         life: 90,
@@ -341,107 +293,6 @@ describe("PokemonController", () => {
           res,
           false,
           "attackId is a required field"
-        );
-      });
-    });
-  });
-
-  describe("initializeTurn", () => {
-    it("should handle error when the Pokemon is not battling", async () => {
-      // GIVEN
-      Context.STATUS = PokemonStatus.Available;
-      const req = {} as Request;
-
-      // WHEN
-      await PokemonController.initializeTurn(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          false,
-          `Error initializing turn. Pokemon is: ${PokemonStatus.Available}`
-        );
-      });
-    });
-
-    it("should set Pokemon status as attacking", async () => {
-      // GIVEN
-      Context.STATUS = PokemonStatus.InBattle;
-      const req = {} as Request;
-
-      // WHEN
-      await PokemonController.initializeTurn(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          true,
-          "Turn initialized successfully."
-        );
-        expect(Context.STATUS).to.be.equal(PokemonStatus.Attacking);
-      });
-    });
-  });
-
-  describe("finishBattle", () => {
-    it("should set Pokemon status as available", async () => {
-      // GIVEN
-      Context.STATUS = PokemonStatus.InBattle;
-      const req = {
-        body: {
-          victory: false,
-        },
-      } as Request;
-
-      // WHEN
-      await PokemonController.finishBattle(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          true,
-          "Pokemon has been reset."
-        );
-        expect(Context.STATUS).to.be.equal(PokemonStatus.Available);
-        expect(Context.ENEMIES.length).to.be.equal(0);
-      });
-    });
-
-    it("should handle error when the Pokemon is not battling", async () => {
-      // GIVEN
-      Context.STATUS = PokemonStatus.Available;
-      const req = {
-        body: {
-          victory: false,
-        },
-      } as Request;
-
-      // WHEN
-      await PokemonController.finishBattle(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          false,
-          `Error resting Pokemon. Pokemon is: ${PokemonStatus.Available}`
-        );
-      });
-    });
-
-    it("should handle validation error when finishing Pokemon battle", async () => {
-      // GIVEN
-      const req = {
-        body: {},
-      } as Request;
-
-      // WHEN
-      await PokemonController.finishBattle(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          false,
-          "victory is a required field"
         );
       });
     });

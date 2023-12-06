@@ -4,33 +4,31 @@ export class Context {
     static POKEMON: Pokemon;
     static ENEMIES: Pokemon[];
     static STATUS: PokemonStatus | undefined;
-    static PLAYER: string;
 
     static initialize() {
         Context.POKEMON = {
-            id: 0,
             name: "Sin nombre",
             type: PokemonType.Normal,
             life: 0,
-            attacks: []
+            attacks: [],
+            player: "Renato"
         };
         Context.ENEMIES = [{
-            id: 4,
             name: 'Blastoise',
             type: PokemonType.Water,
-            life: 1000
+            life: 1000,
+            player: "Jugador 1"
         },{
-            id: 7,
             name: 'Venasaur',
             type: PokemonType.Grass,
-            life: 1000
+            life: 1000,
+            player: "Jugador 2"
         },{
-            id: 9,
             name: 'Nidoran',
             type: PokemonType.Normal,
-            life: 1000
+            life: 1000,
+            player: "Jugador 3"
         }];
         Context.STATUS = PokemonStatus.Available;
-        Context.PLAYER = 'Renato';
     }
 }

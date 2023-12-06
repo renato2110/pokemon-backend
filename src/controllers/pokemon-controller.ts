@@ -39,9 +39,8 @@ export class PokemonController {
    */
   static async getPokemonInfo(_req: Request, res: Response) {
     const data = {
-      pokemon: PokemonService.getPokemon(),
-      status: PokemonService.getPokemonStatus(),
-      player: PokemonService.getPokemonPlayer()
+      ...PokemonService.getPokemon(),
+      status: PokemonService.getPokemonStatus()
     }
     PokemonController.logResponse(res, true, "", data);
   }
@@ -51,6 +50,7 @@ export class PokemonController {
    * @param {Request} req - Express request object.
    * @param {Response} res - Express response object.
    * @param {string} req.body.name - New Pokemon name.
+   * @param {string} req.body.string - New Player name.
    * @param {PokemonType} req.body.type - New Pokemon type.
    * @param {number} req.body.life - New Pokemon life.
    * @param {PokemonAttack[]} req.body.attacks - New Pokemon attacks.
@@ -67,29 +67,9 @@ export class PokemonController {
           `Pokemon attributes cannot be set because it is in a battle.`
         );
       } else {
-        PokemonService.setPokemon(req.body.pokemon);
-        PokemonService.setPokemonPlayer(req.body.player);
-        PokemonController.logResponse(res, true, `${req.body.pokemon.name} attributes set successfully.`);
+        PokemonService.setPokemon(req.body);
+        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
       }
-    } catch (error: any) {
-      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
-    }
-  }
-
-  /**
-   * Edits the life of the Pokemon.
-   * @param {Request} req - Express request object.
-   * @param {Response} res - Express response object.
-   * @param {number} req.body.life - New Pokemon life.
-   */
-  static async editPokemonLife(req: Request, res: Response) {
-    try {
-      await EditPokemonLifeSchema.validate(req.body, { strict: true });
-
-      if (req.body.life === 0)
-        PokemonService.setPokemonStatus(PokemonStatus.Defeated);
-      PokemonService.setPokemonLife(req.body.life);
-      PokemonController.logResponse(res, true, "Pokemon life has been modified.");
     } catch (error: any) {
       PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
     }
@@ -109,7 +89,7 @@ export class PokemonController {
    * Sends an attack from the Pokemon to an enemy. And move the Pokemon to in-battle status.
    * @param {Request} req - Express request object.
    * @param {Response} res - Express response object.
-   * @param {number} req.body.pokemonId - Id of a specific Pokemon enemy.
+   * @param {string} req.body.targetPlayer - Player name of a specific Pokemon enemy.
    * @param {number} req.body.attackId - Number of a specific current attack.
    */
   static async sendPokemonAttack(req: Request, res: Response) {
@@ -124,10 +104,10 @@ export class PokemonController {
           `Pokemon is not ${PokemonStatus.Attacking}. Pokemon is: '${status}'.`
         );
       } else {
-        const { attackId, pokemonId } = req.body;
+        const { attackId, targetPlayer } = req.body;
         const attacks = PokemonService.getPokemonAttacks();
         const enemies = PokemonService.getPokemonEnemies();
-        const pokemon = enemies?.find((pokemon) => pokemon.id === pokemonId);
+        const pokemon = enemies?.find((pokemon) => pokemon.player === targetPlayer);
 
         if (attacks && attacks.length >= attackId && pokemon) {
           PokemonService.setPokemonStatus(PokemonStatus.InBattle);
@@ -138,46 +118,6 @@ export class PokemonController {
         } else {
           PokemonController.logResponse(res, false, "Pokemon or Attack not valid.");
         }
-      }
-    } catch (error: any) {
-      PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
-    }
-  }
-
-  /**
-   * Initializes a new turn in the battle. And move the Pokemon to attacking status.
-   * @param {Request} _req - Express request object.
-   * @param {Response} res - Express response object.
-   */
-  static async initializeTurn(_req: Request, res: Response) {
-    const status = PokemonService.getPokemonStatus();
-    if (status !== PokemonStatus.InBattle) {
-      PokemonController.logResponse(res, false, `Error initializing turn. Pokemon is: ${status}`);
-    } else {
-      PokemonService.setPokemonStatus(PokemonStatus.Attacking);
-      PokemonController.logResponse(res, true, "Turn initialized successfully.");
-    }
-  }
-
-  /**
-   * Finishes the current battle. And move the Pokemon to available status.
-   * @param {Request} req - Express request object.
-   * @param {Response} res - Express response object.
-   * @param {boolean} req.body.victory - Final battle result.
-   */
-  static async finishBattle(req: Request, res: Response) {
-    try {
-      await FinishBattleSchema.validate(req.body, { strict: true });
-      const status = PokemonService.getPokemonStatus();
-      if (
-        status !== PokemonStatus.InBattle &&
-        status !== PokemonStatus.Defeated
-      ) {
-        PokemonController.logResponse(res, false, `Error resting Pokemon. Pokemon is: ${status}`);
-      } else {
-        PokemonService.setPokemonStatus(PokemonStatus.Available);
-        PokemonService.setPokemonEnemies([]);
-        PokemonController.logResponse(res, true, "Pokemon has been reset.");
       }
     } catch (error: any) {
       PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);

@@ -61,19 +61,4 @@ export class PokemonService {
   static setPokemonEnemies(enemies: Pokemon[]): void {
     Context.ENEMIES = enemies;
   }
-
-  /**
-   * Sets the current Pokemon Player.
-   * @param {string} playerName - New Pokemon player.
-   */
-  static setPokemonPlayer(playerName: string): void {
-    Context.PLAYER = playerName;
-  }
-
-  /**
-   * Gets the current Pokemon Player.
-   */
-  static getPokemonPlayer(): string {
-    return Context.PLAYER;
-  }
 }

@@ -1,10 +1,10 @@
 
 export interface Pokemon {
-  id: number;
   name: string;
   type: PokemonType;
   life: number;
   attacks?: PokemonAttack[];
+  player: string;
 }
 
 export interface PokemonAttack {

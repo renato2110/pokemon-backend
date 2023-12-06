@@ -8,12 +8,12 @@ import path from "path";
 export const writeLog = async (message: string): Promise<void> => {
   const logFile = path.join(__dirname, "../../src/logs/log.txt");
   const date = new Date().toLocaleString();
-  fs.appendFile(logFile, `(${date}) ${message}\n`, (error) => {
-    if (error) {
-      console.log("Error writing on log file");
-    }
-    else {
-      console.log("Log has been updated");
-    }
-  });
+  // fs.appendFile(logFile, `(${date}) ${message}\n`, (error) => {
+  //   if (error) {
+  //     console.log("Error writing on log file");
+  //   }
+  //   else {
+  //     console.log("Log has been updated");
+  //   }
+  // });
 };
