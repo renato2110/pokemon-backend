@@ -1,5 +1,6 @@
 import { Context } from "../common/config/context";
-import { Pokemon, PokemonAttack, PokemonStatus } from "../common/models/pokemon-model";
+import { PokemonGymState } from "../common/models/gym-model";
+import { Pokemon, PokemonAttack, PokemonState } from "../common/models/pokemon-model";
 
 export class PokemonService {
   /**
@@ -25,26 +26,18 @@ export class PokemonService {
   }
 
   /**
-   * Sets the current Pokemon life.
-   * @param {number} life - New Pokemon life.
+   * Gets the current Pokemon state.
    */
-  static setPokemonLife(life: number): void {
-    Context.POKEMON.life = life;
+  static getPokemonState(): PokemonState | undefined {
+    return Context.STATE;
   }
 
   /**
-   * Gets the current Pokemon status.
+   * Sets the current Pokemon State.
+   * @param {PokemonState} state - New Pokemon state.
    */
-  static getPokemonStatus(): PokemonStatus | undefined {
-    return Context.STATUS;
-  }
-
-  /**
-   * Sets the current Pokemon Status.
-   * @param {PokemonStatus} status - New Pokemon status.
-   */
-  static setPokemonStatus(status: PokemonStatus): void {
-    Context.STATUS = status;
+  static setPokemonState(state: PokemonState): void {
+    Context.STATE = state;
   }
 
   /**
@@ -60,5 +53,20 @@ export class PokemonService {
    */
   static setPokemonEnemies(enemies: Pokemon[]): void {
     Context.ENEMIES = enemies;
+  }
+
+  /**
+   * Gets the current Pokemon Gym State.
+   */
+  static getPokemonGymState(): PokemonGymState {
+    return Context.POKEMON_GYM_STATE;
+  }
+
+  /**
+   * Sets the current Pokemon Gym state.
+   * @param {PokemonGymState} state - New Pokemon Gym state.
+   */
+  static setPokemonGymState(state: PokemonGymState): void {
+    Context.POKEMON_GYM_STATE = state;
   }
 }

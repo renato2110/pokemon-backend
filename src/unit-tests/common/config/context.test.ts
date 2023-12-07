@@ -1,7 +1,9 @@
-import { PokemonStatus, PokemonType } from "../../../common/models/pokemon-model";
+import { PokemonState, PokemonType } from "../../../common/models/pokemon-model";
 
 import { expect } from 'chai';
 import { Context } from '../../../common/config/context';
+import { PLAYER_NAME } from "../../../common/constants/pokemon-constants";
+import { PokemonGymState } from "../../../common/models/gym-model";
 
 // GIVEN
 describe('Context', () => {
@@ -12,7 +14,7 @@ describe('Context', () => {
 
     // THEN
     it('should initialize POKEMON with default values', () => {
-        expect(Context.POKEMON.player).to.equal('Renato');
+        expect(Context.POKEMON.player).to.equal(PLAYER_NAME);
         expect(Context.POKEMON.name).to.equal('Sin nombre');
         expect(Context.POKEMON.type).to.equal(PokemonType.Normal);
         expect(Context.POKEMON.life).to.equal(0);
@@ -20,12 +22,14 @@ describe('Context', () => {
     });
 
     it('should initialize ENEMIES with default values', () => {
-        expect(Context.ENEMIES).to.have.lengthOf(3);
-        expect(Context.ENEMIES[0].name).to.equal('Blastoise');
-        expect(Context.ENEMIES[1].type).to.equal(PokemonType.Grass);
+        expect(Context.ENEMIES).to.have.lengthOf(0);
     });
 
-    it('should initialize STATUS with Available', () => {
-        expect(Context.STATUS).to.equal(PokemonStatus.Available);
+    it('should initialize State with Available', () => {
+        expect(Context.STATE).to.equal(PokemonState.AVAILABLE);
+    });
+
+    it('should initialize Gym State with In Battle', () => {
+        expect(Context.POKEMON_GYM_STATE).to.equal(PokemonGymState.IN_BATTLE);
     });
 });

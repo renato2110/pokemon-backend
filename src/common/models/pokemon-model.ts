@@ -4,7 +4,7 @@ export interface Pokemon {
   type: PokemonType;
   life: number;
   attacks?: PokemonAttack[];
-  player: string;
+  player?: string;
 }
 
 export interface PokemonAttack {
@@ -19,9 +19,10 @@ export enum PokemonType {
   Water = "agua",
 }
 
-export enum PokemonStatus {
-  Attacking = "atacando",
-  Available = "disponible",
-  Defeated = 'derrotado',
-  InBattle = "en-batalla"
+export enum PokemonState {
+  ATTACKING = "ATACANDO",
+  AVAILABLE = "DISPONIBLE",
+  DEFEATED = "DERROTADO",
+  IN_BATTLE = "EN_BATALLA",
+  WINNER = "GANADOR"
 }

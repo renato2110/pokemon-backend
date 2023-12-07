@@ -12,3 +12,5 @@ export const TYPE_MODIFIERS: TypeModifiers = {
   [PokemonType.Normal]: { [PokemonType.Water]: 1, [PokemonType.Grass]: 1, [PokemonType.Normal]: 1, [PokemonType.Fire]: 1 },
   [PokemonType.Water]: { [PokemonType.Water]: 1, [PokemonType.Grass]: 0.75, [PokemonType.Normal]: 1, [PokemonType.Fire]: 1.5 }
 };
+
+export const PLAYER_NAME = "Renato";

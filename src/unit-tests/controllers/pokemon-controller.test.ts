@@ -6,12 +6,15 @@ import { SinonStub, stub, assert } from "sinon";
 import * as loggerHelper from "../../helpers/logger";
 import {
   Pokemon,
-  PokemonStatus,
+  PokemonState,
   PokemonType,
 } from "../../common/models/pokemon-model";
 import { expect } from "chai";
 import { ResponseLogObject } from "../../common/models/request-model";
 import { ERROR } from "../../common/constants/text-constants";
+import { PokemonGym, PokemonGymState } from "../../common/models/gym-model";
+import { APIService } from "../../services/api-service";
+import { PLAYER_NAME } from "../../common/constants/pokemon-constants";
 
 describe("logResponse", () => {
   let writeLogStub: SinonStub;
@@ -68,7 +71,7 @@ describe("PokemonController", () => {
         life: 0,
         attacks: [],
       };
-      Context.STATUS = PokemonStatus.Available;
+      Context.STATE = PokemonState.AVAILABLE;
       const req = {} as Request;
 
       // WHEN
@@ -76,7 +79,9 @@ describe("PokemonController", () => {
         // THEN
         assert.calledOnceWithExactly(logResponseStub, res, true, "", {
           ...Context.POKEMON,
-          status: Context.STATUS,
+          state: Context.STATE,
+          enemies: [],
+          gymState: PokemonGymState.IN_BATTLE
         });
       });
     });
@@ -112,7 +117,7 @@ describe("PokemonController", () => {
     it("should set Pokemon attributes successfully", async () => {
       // GIVEN
       const req = { body } as Request;
-      Context.STATUS = PokemonStatus.Available;
+      Context.STATE = PokemonState.AVAILABLE;
 
       // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
@@ -130,7 +135,7 @@ describe("PokemonController", () => {
     it("should handle error when setting Pokemon attributes during battle", async () => {
       // GIVEN
       const req = { body } as Request;
-      Context.STATUS = PokemonStatus.InBattle;
+      Context.STATE = PokemonState.IN_BATTLE;
 
       // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
@@ -160,34 +165,6 @@ describe("PokemonController", () => {
     });
   });
 
-  describe("getPokemonEnemies", () => {
-    it("should return Pokemon enemies information", async () => {
-      // GIVEN
-      const req = {} as Request;
-      Context.ENEMIES = [
-        {
-          player: "Renato",
-          name: "Sin nombre",
-          type: PokemonType.Normal,
-          life: 0,
-          attacks: [],
-        },
-      ];
-
-      // WHEN
-      await PokemonController.getPokemonEnemies(req, res).then(() => {
-        // THEN
-        assert.calledOnceWithExactly(
-          logResponseStub,
-          res,
-          true,
-          "",
-          Context.ENEMIES
-        );
-      });
-    });
-  });
-
   describe("sendPokemonAttack", () => {
     const attackBody = {
       attackId: 1,
@@ -203,7 +180,7 @@ describe("PokemonController", () => {
 
     it("should handle error when the Pokemon is not attacking", async () => {
       // GIVEN
-      Context.STATUS = PokemonStatus.InBattle;
+      Context.STATE = PokemonState.IN_BATTLE;
       const req = {
         body: attackBody,
       } as Request;
@@ -215,14 +192,14 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           false,
-          `Pokemon is not ${PokemonStatus.Attacking}. Pokemon is: '${Context.STATUS}'.`
+          `Pokemon is not ${PokemonState.ATTACKING}. Pokemon is: '${Context.STATE}'.`
         );
       });
     });
 
     it("should handle error when the Pokemon attack or Pokemon enemy are not valid", async () => {
       // GIVEN
-      Context.STATUS = PokemonStatus.Attacking;
+      Context.STATE = PokemonState.ATTACKING;
       const req = {
         body: attackBody,
       } as Request;
@@ -241,7 +218,7 @@ describe("PokemonController", () => {
 
     it("should return the Pokemon attack and Pokemon enemy successfully", async () => {
       // GIVEN
-      Context.STATUS = PokemonStatus.Attacking;
+      Context.STATE = PokemonState.ATTACKING;
       Context.ENEMIES = [enemy];
       Context.POKEMON = {
         player: "Renato",
@@ -258,6 +235,7 @@ describe("PokemonController", () => {
       const req = {
         body: attackBody,
       } as Request;
+      const sendAttackToGymMock = stub(APIService, 'sendAttackToGym').resolves(true);
 
       // WHEN
       await PokemonController.sendPokemonAttack(req, res).then(() => {
@@ -275,8 +253,51 @@ describe("PokemonController", () => {
             pokemon: Context.ENEMIES[0],
           }
         );
-        expect(Context.STATUS).to.be.equal(PokemonStatus.InBattle);
+        expect(Context.STATE).to.be.equal(PokemonState.ATTACKING);
       });
+      sendAttackToGymMock.restore();
+    });
+
+    it("should handle error Pokemon Gym API fail", async () => {
+      // GIVEN
+      Context.STATE = PokemonState.ATTACKING;
+      Context.ENEMIES = [enemy];
+      Context.POKEMON = {
+        player: "Renato",
+        name: "Charizard",
+        type: PokemonType.Fire,
+        life: 90,
+        attacks: [
+          {
+            type: PokemonType.Fire,
+            power: 100,
+          },
+        ],
+      };
+      const req = {
+        body: attackBody,
+      } as Request;
+      const sendAttackToGymMock = stub(APIService, 'sendAttackToGym').rejects(new Error('Error simulado'));
+
+      // WHEN
+      await PokemonController.sendPokemonAttack(req, res).catch(() => {
+        // THEN
+        assert.calledOnceWithExactly(
+          logResponseStub,
+          res,
+          true,
+          "Pokemon Attack send successfully.",
+          {
+            attack: {
+              type: PokemonType.Fire,
+              power: 100,
+            },
+            pokemon: Context.ENEMIES[0],
+          }
+        );
+        expect(Context.STATE).to.be.equal(PokemonState.ATTACKING);
+      });
+      sendAttackToGymMock.restore();
     });
 
     it("should handle validation error when sending Pokemon attack", async () => {
@@ -298,40 +319,121 @@ describe("PokemonController", () => {
     });
   });
 
-  describe("addToBattle", () => {
+  describe("joinToBattle", () => {
     it("should handle error when the Pokemon is not available", async () => {
       // GIVEN
-      Context.STATUS = PokemonStatus.InBattle;
+      Context.STATE = PokemonState.IN_BATTLE;
       const req = {} as Request;
 
       // WHEN
-      await PokemonController.addToBattle(req, res).then(() => {
+      await PokemonController.joinToBattle(req, res).then(() => {
         // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
           false,
-          `Error adding to battle. Pokemon is: ${PokemonStatus.InBattle}.`
+          `Error joining to battle. Pokemon is: ${PokemonState.IN_BATTLE}.`
         );
       });
     });
 
-    it("should set Pokemon status as in battle", async () => {
+    it("should set Pokemon state as in battle", async () => {
       // GIVEN
-      Context.STATUS = PokemonStatus.Available;
+      Context.STATE = PokemonState.AVAILABLE;
       const req = {} as Request;
+      const joinGymBattleMock = stub(APIService, 'joinGymBattle').resolves(true);
 
       // WHEN
-      await PokemonController.addToBattle(req, res).then(() => {
+      await PokemonController.joinToBattle(req, res).then(() => {
         // THEN
         assert.calledOnceWithExactly(
           logResponseStub,
           res,
           true,
-          "Pokemon added to battle successfully."
+          "Pokemon joined to battle successfully."
         );
-        expect(Context.STATUS).to.be.equal(PokemonStatus.InBattle);
       });
+
+      joinGymBattleMock.restore();
+    });
+
+    it("should handle error Pokemon Gym API fails", async () => {
+      // GIVEN
+      Context.STATE = PokemonState.AVAILABLE;
+      const req = {} as Request;
+      const joinGymBattleMock = stub(APIService, 'joinGymBattle').rejects(new Error('Error simulado'));
+
+      // WHEN
+      await PokemonController.joinToBattle(req, res).catch(() => {
+        // THEN
+        assert.calledOnceWithExactly(
+          logResponseStub,
+          res,
+          true,
+          "Pokemon joined to battle successfully."
+        );
+      });
+
+      joinGymBattleMock.restore();
+    });
+
+  });
+
+  describe("setGymInfo", () => {
+    it("should set the current Gym attributes successfully", async () => {
+      // GIVEN
+      const pokemonGym: PokemonGym = {
+        id: 0,
+        state: PokemonGymState.LOBBY,
+        playerInformationList: [{
+          playerName: PLAYER_NAME,
+          state: PokemonState.IN_BATTLE,
+          pokemon: {
+            name: 'Blastoise',
+            type: PokemonType.Water,
+            life: 100,
+            attacks: [{
+              type: PokemonType.Water,
+              power: 10
+            }]
+          }
+        }, {
+          playerName: 'ENEMY',
+          state: PokemonState.IN_BATTLE,
+          pokemon: {
+            name: 'Charizard',
+            type: PokemonType.Fire,
+            life: 100,
+            attacks: [{
+              type: PokemonType.Fire,
+              power: 10
+            }]
+          }
+        }]
+      };
+      Context.STATE = PokemonState.ATTACKING;
+      Context.POKEMON.player = PLAYER_NAME;
+
+      // WHEN
+      await PokemonController.setGymInfo(pokemonGym).then(() => {
+        // THEN
+        expect(Context.STATE).to.be.equal(PokemonState.IN_BATTLE);
+        expect(Context.ENEMIES[0].name).to.be.equal('Charizard');
+      });
+    });
+
+    it("should handle validation error when setting Gym info", async () => {
+      // GIVEN
+      const pokemonInfo = {} as PokemonGym;
+      const consoleStub = stub(console, "log");
+
+      // WHEN
+      await PokemonController.setGymInfo(pokemonInfo).then(() => {
+        // THEN
+        assert.calledWithExactly(consoleStub, "playerInformationList is a required field");
+      });
+
+      consoleStub.restore();
     });
   });
 });

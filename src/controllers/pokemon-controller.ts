@@ -4,12 +4,17 @@ import {
   FinishBattleSchema,
   SavePokemonSchema,
   SendPokemonAttackSchema,
+  SetGymInfoSchema,
 } from "../validators/pokemon-validator";
 import { ERROR, SUCCESS, VALIDATION_ERROR } from "../common/constants/text-constants";
-import { PokemonStatus } from "../common/models/pokemon-model";
+import { Pokemon, PokemonState } from "../common/models/pokemon-model";
 import { PokemonService } from "../services/pokemon-service";
 import { ResponseLogObject } from "../common/models/request-model";
 import { writeLog } from "../helpers/logger";
+import { PokemonGym, PokemonGymState } from "../common/models/gym-model";
+import { PLAYER_NAME } from "../common/constants/pokemon-constants";
+import axios from "axios";
+import { APIService } from "../services/api-service";
 
 export class PokemonController {
   /**
@@ -28,7 +33,7 @@ export class PokemonController {
     const status = success ? 200 : 400;
 
     res.status(status).send(response);
-    
+
     await writeLog(`RESPONSE: ${JSON.stringify(response)}`);
   };
 
@@ -40,7 +45,9 @@ export class PokemonController {
   static async getPokemonInfo(_req: Request, res: Response) {
     const data = {
       ...PokemonService.getPokemon(),
-      status: PokemonService.getPokemonStatus()
+      state: PokemonService.getPokemonState(),
+      enemies: PokemonService.getPokemonEnemies(),
+      gymState: PokemonService.getPokemonGymState()
     }
     PokemonController.logResponse(res, true, "", data);
   }
@@ -59,8 +66,8 @@ export class PokemonController {
     try {
       await SavePokemonSchema.validate(req.body, { strict: true });
 
-      const status = PokemonService.getPokemonStatus();
-      if (status !== PokemonStatus.Available) {
+      const state = PokemonService.getPokemonState();
+      if (state !== PokemonState.AVAILABLE) {
         PokemonController.logResponse(
           res,
           false,
@@ -76,17 +83,7 @@ export class PokemonController {
   }
 
   /**
-   * Gets the information about the current enemies of the Pokemon.
-   * @param {Request} _req - Express request object.
-   * @param {Response} res - Express response object.
-   */
-  static async getPokemonEnemies(_req: Request, res: Response) {
-    const enemies = PokemonService.getPokemonEnemies();
-    PokemonController.logResponse(res, true, "", enemies);
-  }
-
-  /**
-   * Sends an attack from the Pokemon to an enemy. And move the Pokemon to in-battle status.
+   * Sends an attack from the Pokemon to an enemy.
    * @param {Request} req - Express request object.
    * @param {Response} res - Express response object.
    * @param {string} req.body.targetPlayer - Player name of a specific Pokemon enemy.
@@ -96,12 +93,12 @@ export class PokemonController {
     try {
       await SendPokemonAttackSchema.validate(req.body, { strict: true });
 
-      const status = PokemonService.getPokemonStatus();
-      if (status !== PokemonStatus.Attacking) {
+      const status = PokemonService.getPokemonState();
+      if (status !== PokemonState.ATTACKING) {
         PokemonController.logResponse(
           res,
           false,
-          `Pokemon is not ${PokemonStatus.Attacking}. Pokemon is: '${status}'.`
+          `Pokemon is not ${PokemonState.ATTACKING}. Pokemon is: '${status}'.`
         );
       } else {
         const { attackId, targetPlayer } = req.body;
@@ -110,11 +107,16 @@ export class PokemonController {
         const pokemon = enemies?.find((pokemon) => pokemon.player === targetPlayer);
 
         if (attacks && attacks.length >= attackId && pokemon) {
-          PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-          PokemonController.logResponse(res, true, "Pokemon Attack send successfully.", {
-            attack: attacks[attackId - 1],
-            pokemon,
+          APIService.sendAttackToGym(attackId, targetPlayer).then(() => {
+            PokemonController.logResponse(res, true, "Pokemon Attack send successfully.", {
+              attack: attacks[attackId - 1],
+              pokemon,
+            });
+          })
+          .catch(error => {
+            PokemonController.logResponse(res, false, error.message);
           });
+
         } else {
           PokemonController.logResponse(res, false, "Pokemon or Attack not valid.");
         }
@@ -125,17 +127,53 @@ export class PokemonController {
   }
 
   /**
-   * Adds the current Pokemon to the battle. And move the Pokemon to in-battle status.
+   * Joins the current Pokemon to the battle.
    * @param {Request} _req - Express request.
    * @param {Response} res - Express response object.
    */
-  static async addToBattle(_req: Request, res: Response) {
-    const status = PokemonService.getPokemonStatus();
-    if (status !== PokemonStatus.Available) {
-      PokemonController.logResponse(res, false, `Error adding to battle. Pokemon is: ${status}.`);
+  static async joinToBattle(_req: Request, res: Response) {
+    const state = PokemonService.getPokemonState();
+    if (state !== PokemonState.AVAILABLE) {
+      PokemonController.logResponse(res, false, `Error joining to battle. Pokemon is: ${state}.`);
     } else {
-      PokemonService.setPokemonStatus(PokemonStatus.InBattle);
-      PokemonController.logResponse(res, true, "Pokemon added to battle successfully.");
+      APIService.joinGymBattle().then(() => {
+        PokemonController.logResponse(res, true, "Pokemon joined to battle successfully.");
+      })
+      .catch(error => {
+        PokemonController.logResponse(res, false, error.message);
+      });
     }
+  }
+
+
+  /**
+   * Adds the current Gym information to the current Pokemon.
+   * @param {PokemonGym} pokemonGym - Pokemon Gym Information.
+   * @param {PokemonGymState} pokemonGym.state - Current Gym states.
+   * @param {PlayerInformation[]} pokemonGym.playerInformationList - All the information about the enemies.
+   */
+  static async setGymInfo(pokemonGym: PokemonGym) {
+    try {
+      await SetGymInfoSchema.validate(pokemonGym, { strict: true });
+      PokemonService.setPokemonGymState(pokemonGym.state);
+      const enemies: Pokemon[] = [];
+
+      pokemonGym.playerInformationList.forEach(player => {
+        const pokemon: Pokemon = { ...player.pokemon, player: player.playerName };
+        if (player.playerName === PLAYER_NAME) {
+          PokemonService.setPokemon(pokemon);
+          PokemonService.setPokemonState(player.state);
+        }
+        else {
+          enemies.push(pokemon);
+        }
+      });
+
+      PokemonService.setPokemonEnemies(enemies);
+    } catch (error: any) {
+      console.log(error.errors[0] || VALIDATION_ERROR);
+    }
+
+
   }
 }

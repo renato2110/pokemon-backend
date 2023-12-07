@@ -1,9 +1,12 @@
-import { Pokemon, PokemonStatus, PokemonType } from "../models/pokemon-model";
+import { PokemonGymState } from "../models/gym-model";
+import { Pokemon, PokemonState, PokemonType } from "../models/pokemon-model";
+import { PLAYER_NAME } from "../constants/pokemon-constants";
 
 export class Context {
     static POKEMON: Pokemon;
     static ENEMIES: Pokemon[];
-    static STATUS: PokemonStatus | undefined;
+    static STATE: PokemonState | undefined;
+    static POKEMON_GYM_STATE: PokemonGymState;
 
     static initialize() {
         Context.POKEMON = {
@@ -11,24 +14,10 @@ export class Context {
             type: PokemonType.Normal,
             life: 0,
             attacks: [],
-            player: "Renato"
+            player: PLAYER_NAME
         };
-        Context.ENEMIES = [{
-            name: 'Blastoise',
-            type: PokemonType.Water,
-            life: 1000,
-            player: "Jugador 1"
-        },{
-            name: 'Venasaur',
-            type: PokemonType.Grass,
-            life: 1000,
-            player: "Jugador 2"
-        },{
-            name: 'Nidoran',
-            type: PokemonType.Normal,
-            life: 1000,
-            player: "Jugador 3"
-        }];
-        Context.STATUS = PokemonStatus.Available;
+        Context.ENEMIES = [];
+        Context.STATE = PokemonState.AVAILABLE;
+        Context.POKEMON_GYM_STATE = PokemonGymState.IN_BATTLE;
     }
 }

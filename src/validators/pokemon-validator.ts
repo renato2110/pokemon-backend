@@ -1,6 +1,7 @@
 
 import { array, boolean, number, object, string } from 'yup';
-import { PokemonType } from "../common/models/pokemon-model";
+import { PokemonState, PokemonType } from "../common/models/pokemon-model";
+import { PokemonGymState } from '../common/models/gym-model';
 
 const lifeSchema = number().min(1).max(9999).required();
 const typeSchema = string().required().oneOf(Object.values(PokemonType));
@@ -13,7 +14,6 @@ const attackSchema = object().shape({
 
 export const SavePokemonSchema = object().shape({
     name: string().required(),
-    player: string().required(),
     type: typeSchema,
     life: lifeSchema,
     attacks: array().of(attackSchema).min(1).max(4).required()
@@ -30,4 +30,15 @@ export const SendPokemonAttackSchema = object().shape({
 
 export const FinishBattleSchema = object().shape({
     victory: boolean().required()
+});
+
+const playerSchema = object().shape({
+    playerName: string().required(),
+    state: string().required().oneOf(Object.values(PokemonState)),
+    pokemon: SavePokemonSchema
+});
+
+export const SetGymInfoSchema = object().shape({
+    state: string().required().oneOf(Object.values(PokemonGymState)),
+    playerInformationList: array().of(playerSchema).min(1).max(4).required()
 });
