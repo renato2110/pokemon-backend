@@ -44,20 +44,17 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run tests and generate coverage
-      run: npm run test -- --coverage
-
-    - name: Extract coverage from HTML report
+    - name: Run tests and check coverage
       run: |
-        coverage=$(cat coverage/lcov-report/index.html | tr -d '\n' | grep -oP '<span class="strong">(\d+\.\d+)% </span><span class="quiet">Statements</span>' | awk -F'>' '{print $2}' | tr -d '%')
-        
-        if [ -n "$coverage" ]; then
-          echo "Statements Coverage is $coverage."
-          if (( $(echo "$coverage < 90" | bc -l) )); then
-            echo "Statements Coverage must be greater than 90%."
-            exit 1
-          fi
-        else
-          echo "Could not obtain Statements coverage information."
+        npm run test
+
+        npm install -g coverage-percentage
+
+        coverage=$(coverage-percentage coverage/lcov-report/lcov.info)
+
+        echo "Statements Coverage is $coverage."
+
+        if (( $(echo "$coverage < 90" | bc -l) )); then
+          echo "Statements Coverage must be greater than 90%."
           exit 1
         fi
