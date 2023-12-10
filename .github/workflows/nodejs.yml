@@ -45,11 +45,11 @@ jobs:
       run: npm install
 
     - name: Run tests and generate coverage
-      run: npm run test
+      run: npm run test -- --coverage
 
     - name: Extract coverage from HTML report
       run: |
-        coverage=$(cat coverage/lcov-report/index.html | grep -oP '<span class="strong">(\d+\.\d+)% </span><span class="quiet">Statements</span>' | awk -F'>' '{print $2}' | tr -d '%')
+        coverage=$(cat coverage/lcov-report/index.html | tr -d '\n' | grep -oP '<span class="strong">(\d+\.\d+)% </span><span class="quiet">Statements</span>' | awk -F'>' '{print $2}' | tr -d '%')
         
         if [ -n "$coverage" ]; then
           echo "Statements Coverage is $coverage."
