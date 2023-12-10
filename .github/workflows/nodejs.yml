@@ -44,12 +44,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run tests and check coverage
-      run: |
-        npx nyc mocha
+    - name: Run tests
+      run: npm run test
 
-        # Extraer el porcentaje de cobertura de nyc
-        coverage=$(npx nyc report -t text-summary | grep -oP '(\d+\.\d+)%' | awk '{print $1}')
+    - name: Check coverage
+      run: |
+        npx nyc report --reporter=json
+        coverage=$(cat coverage/coverage-final.json | jq -r '.total.lines.pct')
         
         if [ -n "$coverage" ]; then
           echo "Current Coverage is $coverage%."
