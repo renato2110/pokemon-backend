@@ -41,16 +41,13 @@ jobs:
       with:
         node-version: 16.15.0
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
+    - name: Run tests and generate coverage
       run: npm run test
 
-    - name: Check coverage
+    - name: Extract coverage from HTML report
       run: |
-        npx nyc report --reporter=json
-        coverage=$(cat coverage/coverage-final.json | jq -r '.total.lines.pct')
+        # Suponiendo que el informe HTML se genera en un directorio llamado "coverage"
+        coverage=$(cat coverage/lcov-report/index.html | grep -oP '<span class="strong">(\d+\.\d+)%' | awk -F'>' '{print $2}')
         
         if [ -n "$coverage" ]; then
           echo "Current Coverage is $coverage%."
