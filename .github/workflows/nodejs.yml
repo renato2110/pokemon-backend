@@ -46,9 +46,11 @@ jobs:
 
     - name: Run tests and check coverage
       run: |
-        npm run test
+        npm run test --coverage
 
         npm install -g coverage-percentage
+
+        npm run-script badge
 
         coverage=$(coverage-percentage coverage/lcov.info)
 
