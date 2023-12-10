@@ -50,7 +50,7 @@ jobs:
     - name: Extract coverage from HTML report
       run: |
         # Suponiendo que el informe HTML se genera en un directorio llamado "coverage"
-        coverage=$(cat coverage/lcov-report/index.html | grep -oP '<span class="strong">(\d+\.\d+)% </span><span class="quiet">Statements</span>' | awk -F'>' '{print $1}' | awk '{print $NF}' | tr -d '%')
+        coverage=$(cat coverage/lcov-report/index.html | grep -oP 'Statements<\/span>.*?(\d+\.\d+)%' | awk -F'>' '{print $2}' | tr -d '%')
         
         if [ -n "$coverage" ]; then
           echo "Statements Coverage is $coverage."
