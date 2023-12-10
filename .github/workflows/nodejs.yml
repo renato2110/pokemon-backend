@@ -49,9 +49,15 @@ jobs:
 
     - name: Check coverage
       run: |
-        coverage=$(grep -oP 'Statements.*?(\d+)%' coverage/summary.txt | awk '{print $2}')
-        echo "Current Coverage is $coverage%."
-        if [ "$coverage" -lt 90 ]; then
-          echo "Coverage must be grater than 90%."
+        coverage=$(npm run test -- --coverage | grep -oP 'Statements.*?(\d+)%' | awk '{print $2}')
+        
+        if [ -n "$coverage" ]; then
+          echo "Current Coverage is $coverage%."
+          if [ "$coverage" -lt 90 ]; then
+            echo "Coverage must be grater than 90%."
+            exit 1
+          fi
+        else
+          echo "Could not obtain coverage information."
           exit 1
         fi
