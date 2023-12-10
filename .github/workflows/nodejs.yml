@@ -27,33 +27,10 @@ jobs:
     - name: Build project
       run: npm run build
 
-  test:
+   coverage:
     runs-on: ubuntu-latest
 
     needs: build
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.15.0
-
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
-      run: npm run test
-
-  coverage:
-    runs-on: ubuntu-latest
-
-    needs: test
 
     steps:
     - name: Checkout repository
@@ -73,7 +50,8 @@ jobs:
     - name: Check coverage
       run: |
         coverage=$(grep -oP 'Statements.*?(\d+)%' coverage/summary.txt | awk '{print $2}')
+        echo "Current Coverage is $coverage%."
         if [ "$coverage" -lt 90 ]; then
-          echo "Coverage is less than 90%."
+          echo "Coverage must be grater than 90%."
           exit 1
         fi
