@@ -50,7 +50,7 @@ jobs:
 
         npm install -g coverage-percentage
 
-        coverage=$(coverage-percentage coverage/lcov-report/lcov.info)
+        coverage=$(coverage-percentage coverage/lcov.info)
 
         echo "Statements Coverage is $coverage."
 
