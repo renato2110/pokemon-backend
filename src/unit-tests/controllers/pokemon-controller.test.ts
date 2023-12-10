@@ -71,6 +71,8 @@ describe("PokemonController", () => {
         life: 0,
         attacks: [],
       };
+      Context.ENEMIES = [];
+      Context.POKEMON_GYM_STATE = PokemonGymState.IN_BATTLE;
       Context.STATE = PokemonState.AVAILABLE;
       const req = {} as Request;
 
