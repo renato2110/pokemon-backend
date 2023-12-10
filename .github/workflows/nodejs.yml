@@ -44,12 +44,12 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run coverage
-      run: npm run test -- --coverage
-
     - name: Run tests and check coverage
       run: |
-        coverage=$(npm run test -- --coverage | grep -oP 'Statements.*?(\d+\.\d+)%' | awk '{print $1}')
+        npx nyc mocha
+
+        # Extraer el porcentaje de cobertura de nyc
+        coverage=$(npx nyc report -t text-summary | grep -oP '(\d+\.\d+)%' | awk '{print $1}')
         
         if [ -n "$coverage" ]; then
           echo "Current Coverage is $coverage%."
@@ -61,4 +61,3 @@ jobs:
           echo "Could not obtain coverage information."
           exit 1
         fi
-
