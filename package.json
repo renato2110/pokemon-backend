@@ -7,7 +7,8 @@
     "test": "nyc mocha -r ts-node/register src/unit-tests/**/*.test.ts  src/unit-tests/**/**/*.test.ts",
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "gym-connection-testing": "mocha -r ts-node/register src/action-tests/gym-connection-testing.test.ts"
   },
   "author": "Renato Mainieri",
   "license": "ISC",
