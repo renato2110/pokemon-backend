@@ -45,9 +45,9 @@ app.use(express_1.default.json());
 app.get('/', (_req, res) => {
     return res.send('Express Typescript on Vercel');
 });
+app.use('/pokemon/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
+app.use(router_1.router);
 app.listen(PORT, () => {
-    app.use('/pokemon/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
-    app.use(router_1.router);
     console.log(`Pokemon Server in now running on: http://localhost:${PORT}`);
     setInterval(() => {
         api_service_1.APIService.getGymInfo();
