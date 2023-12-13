@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import {
-  EditPokemonLifeSchema,
-  FinishBattleSchema,
   SavePokemonSchema,
-  SendPokemonAttackSchema,
-  SetGymInfoSchema,
+  SendPokemonAttackSchema
 } from "../validators/pokemon-validator";
 import { ERROR, SUCCESS, VALIDATION_ERROR } from "../common/constants/text-constants";
 import { Pokemon, PokemonState } from "../common/models/pokemon-model";
@@ -13,7 +10,6 @@ import { ResponseLogObject } from "../common/models/request-model";
 import { writeLog } from "../helpers/logger";
 import { PokemonGym, PokemonGymState } from "../common/models/gym-model";
 import { PLAYER_NAME } from "../common/constants/pokemon-constants";
-import axios from "axios";
 import { APIService } from "../services/api-service";
 
 export class PokemonController {
