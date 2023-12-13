@@ -1,32 +1,37 @@
 {
     "version": 2,
     "builds": [
-        {
-            "src": "dist/index.js",
-            "use": "@vercel/node",
-            "config": { "includeFiles": ["dist/**"] }
-        }
+      {
+        "src": "./dist/index.js",
+        "use": "@vercel/node",
+        "config": { "includeFiles": ["./dist/**"] }
+      }
     ],
     "routes": [
-        {
-          "src": "/pokemon/iniciar",
-          "dest": "dist/index.js"
-        },
-        {
-          "src": "/pokemon/info",
-          "dest": "dist/index.js"
-        },
-        {
-          "src": "/pokemon/atacar",
-          "dest": "dist/index.js"
-        },
-        {
-          "src": "/pokemon/unirse",
-          "dest": "dist/index.js"
-        },
-        {
-          "src": "/pokemon/api-docs/(.*)",
-          "dest": "dist/index.js"
-        }
-      ]
-}
+      {
+        "src": "/pokemon/iniciar",
+        "dest": "./dist/index.js"
+      },
+      {
+        "src": "/pokemon/info",
+        "dest": "./dist/index.js"
+      },
+      {
+        "src": "/pokemon/atacar",
+        "dest": "./dist/index.js"
+      },
+      {
+        "src": "/pokemon/unirse",
+        "dest": "./dist/index.js"
+      },
+      {
+        "src": "/pokemon/api-docs/(.*)",
+        "dest": "./dist/index.js"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "./dist/index.js"
+      }
+    ]
+  }
+  
