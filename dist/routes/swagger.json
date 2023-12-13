@@ -1,0 +1,356 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Pokemon API",
+        "version": "1.0.0",
+        "description": "List of APIs to use the Pokemon Backend"
+    },
+    "basePath": "http://localhost:3000",
+    "paths": {
+        "/pokemon/info": {
+            "get": {
+                "tags": [
+                    "Pokemon"
+                ],
+                "summary": "Get all the info about the Pokemon",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "success"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": ""
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "example": {
+                                        "id": 1,
+                                        "name": "Charizard",
+                                        "type": "fuego",
+                                        "life": 100,
+                                        "attacks": [
+                                            {
+                                                "type": "fuego",
+                                                "power": 100
+                                            },
+                                            {
+                                                "type": "agua",
+                                                "power": 80
+                                            },
+                                            {
+                                                "type": "normal",
+                                                "power": 20
+                                            },
+                                            {
+                                                "type": "planta",
+                                                "power": 80
+                                            }
+                                        ],
+                                        "state": "disponible",
+                                        "enemies": {
+                                            "type": "array",
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Blastoise",
+                                                    "type": "agua",
+                                                    "life": 100
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "name": "Venasaur",
+                                                    "type": "planta",
+                                                    "life": 100
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "Nidoran",
+                                                    "type": "normal",
+                                                    "life": 100
+                                                }
+                                            ]
+                                        },
+                                        "gymState": "LOBBY"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Internal server error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pokemon/iniciar": {
+            "put": {
+                "tags": [
+                    "Pokemon"
+                ],
+                "summary": "Set all the info about the Pokemon",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Pokemon info",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Charizard"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "example": "fire"
+                                },
+                                "life": {
+                                    "type": "integer",
+                                    "example": 200
+                                },
+                                "attacks": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "example": "fuego"
+                                            },
+                                            "power": {
+                                                "type": "integer",
+                                                "example": 100
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "success"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Pokemon attributes set successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error response when a Pokemon attribute is not valid",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "array",
+                                    "example": "type must be one of the following values: fuego, planta, normal, agua"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Internal server error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pokemon/atacar": {
+            "post": {
+                "tags": [
+                    "Attack"
+                ],
+                "summary": "Send a Pokemon attack against a Pokemon enemy",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Pokemon Attack and Enemy",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "attackId": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "targetPlayer": {
+                                    "type": "string",
+                                    "example": "Ash"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "success"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "example": {
+                                        "attack": {
+                                            "type": "agua",
+                                            "power": 100
+                                        },
+                                        "pokemon": {
+                                            "id": 1,
+                                            "name": "Blastoise",
+                                            "type": "agua",
+                                            "life": 200
+                                        }
+                                    }
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Pokemon Attack send successfully."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error response when the Pokemon Attack is not valid",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "array",
+                                    "example": "type must be one of the following values: fuego, planta, normal, agua"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Internal server error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pokemon/unirse": {
+            "post": {
+                "tags": [
+                    "Battle"
+                ],
+                "summary": "Add Pokemon to Pokemon Gym",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "success"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Pokemon added to battle successfully."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error response when the Pokemon state is not 'disponible'",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "array",
+                                    "example": "Error adding to battle. Pokemon is: en-batlla"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Internal server error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
