@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import { Context } from "./common/config/context";
 import { APIService } from "./services/api-service";
 var cors = require('cors')
+import { Request, Response } from 'express'
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,6 +16,10 @@ app.use(cors())
 Context.initialize();
 
 app.use(express.json());
+
+app.get('/', (_req: Request, res: Response) => {
+  return res.send('Express Typescript on Vercel')
+})
 
 app.listen(PORT, () => {
   app.use('/pokemon/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
