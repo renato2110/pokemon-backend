@@ -70,10 +70,11 @@ describe("PokemonController", () => {
         type: PokemonType.Normal,
         life: 0,
         attacks: [],
+        state: PokemonState.AVAILABLE,
       };
       Context.ENEMIES = [];
       Context.POKEMON_GYM_STATE = PokemonGymState.IN_BATTLE;
-      Context.STATE = PokemonState.AVAILABLE;
+      Context.POKEMON.state = PokemonState.AVAILABLE;
       const req = {} as Request;
 
       // WHEN
@@ -81,7 +82,6 @@ describe("PokemonController", () => {
         // THEN
         assert.calledOnceWithExactly(logResponseStub, res, true, "", {
           ...Context.POKEMON,
-          state: Context.STATE,
           enemies: [],
           gymState: PokemonGymState.IN_BATTLE
         });
@@ -119,7 +119,7 @@ describe("PokemonController", () => {
     it("should set Pokemon attributes successfully", async () => {
       // GIVEN
       const req = { body } as Request;
-      Context.STATE = PokemonState.AVAILABLE;
+      Context.POKEMON.state = PokemonState.AVAILABLE;
 
       // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
@@ -137,7 +137,7 @@ describe("PokemonController", () => {
     it("should handle error when setting Pokemon attributes during battle", async () => {
       // GIVEN
       const req = { body } as Request;
-      Context.STATE = PokemonState.IN_BATTLE;
+      Context.POKEMON.state = PokemonState.IN_BATTLE;
 
       // WHEN
       await PokemonController.setPokemonAttributes(req, res).then(() => {
@@ -182,7 +182,7 @@ describe("PokemonController", () => {
 
     it("should handle error when the Pokemon is not attacking", async () => {
       // GIVEN
-      Context.STATE = PokemonState.IN_BATTLE;
+      Context.POKEMON.state = PokemonState.IN_BATTLE;
       const req = {
         body: attackBody,
       } as Request;
@@ -194,14 +194,14 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           false,
-          `Pokemon is not ${PokemonState.ATTACKING}. Pokemon is: '${Context.STATE}'.`
+          `Pokemon is not ${PokemonState.ATTACKING}. Pokemon is: '${Context.POKEMON.state}'.`
         );
       });
     });
 
     it("should handle error when the Pokemon attack or Pokemon enemy are not valid", async () => {
       // GIVEN
-      Context.STATE = PokemonState.ATTACKING;
+      Context.POKEMON.state = PokemonState.ATTACKING;
       const req = {
         body: attackBody,
       } as Request;
@@ -220,7 +220,6 @@ describe("PokemonController", () => {
 
     it("should return the Pokemon attack and Pokemon enemy successfully", async () => {
       // GIVEN
-      Context.STATE = PokemonState.ATTACKING;
       Context.ENEMIES = [enemy];
       Context.POKEMON = {
         player: "Renato",
@@ -233,6 +232,7 @@ describe("PokemonController", () => {
             power: 100,
           },
         ],
+        state: PokemonState.ATTACKING
       };
       const req = {
         body: attackBody,
@@ -255,14 +255,13 @@ describe("PokemonController", () => {
             pokemon: Context.ENEMIES[0],
           }
         );
-        expect(Context.STATE).to.be.equal(PokemonState.ATTACKING);
+        expect(Context.POKEMON.state).to.be.equal(PokemonState.ATTACKING);
       });
       sendAttackToGymMock.restore();
     });
 
     it("should handle error Pokemon Gym API fail", async () => {
       // GIVEN
-      Context.STATE = PokemonState.ATTACKING;
       Context.ENEMIES = [enemy];
       Context.POKEMON = {
         player: "Renato",
@@ -275,6 +274,7 @@ describe("PokemonController", () => {
             power: 100,
           },
         ],
+        state: PokemonState.ATTACKING
       };
       const req = {
         body: attackBody,
@@ -297,7 +297,7 @@ describe("PokemonController", () => {
             pokemon: Context.ENEMIES[0],
           }
         );
-        expect(Context.STATE).to.be.equal(PokemonState.ATTACKING);
+        expect(Context.POKEMON.state).to.be.equal(PokemonState.ATTACKING);
       });
       sendAttackToGymMock.restore();
     });
@@ -324,7 +324,7 @@ describe("PokemonController", () => {
   describe("joinToBattle", () => {
     it("should handle error when the Pokemon is not available", async () => {
       // GIVEN
-      Context.STATE = PokemonState.IN_BATTLE;
+      Context.POKEMON.state = PokemonState.IN_BATTLE;
       const req = {} as Request;
 
       // WHEN
@@ -341,7 +341,7 @@ describe("PokemonController", () => {
 
     it("should set Pokemon state as in battle", async () => {
       // GIVEN
-      Context.STATE = PokemonState.AVAILABLE;
+      Context.POKEMON.state = PokemonState.AVAILABLE;
       const req = {} as Request;
       const joinGymBattleMock = stub(APIService, 'joinGymBattle').resolves(true);
 
@@ -361,7 +361,7 @@ describe("PokemonController", () => {
 
     it("should handle error Pokemon Gym API fails", async () => {
       // GIVEN
-      Context.STATE = PokemonState.AVAILABLE;
+      Context.POKEMON.state = PokemonState.AVAILABLE;
       const req = {} as Request;
       const joinGymBattleMock = stub(APIService, 'joinGymBattle').rejects(new Error('Error simulado'));
 
@@ -413,29 +413,15 @@ describe("PokemonController", () => {
           }
         }]
       };
-      Context.STATE = PokemonState.ATTACKING;
+      Context.POKEMON.state = PokemonState.ATTACKING;
       Context.POKEMON.player = PLAYER_NAME;
 
       // WHEN
       await PokemonController.setGymInfo(pokemonGym).then(() => {
         // THEN
-        expect(Context.STATE).to.be.equal(PokemonState.IN_BATTLE);
+        expect(Context.POKEMON.state).to.be.equal(PokemonState.IN_BATTLE);
         expect(Context.ENEMIES[0].name).to.be.equal('Charizard');
       });
-    });
-
-    it("should handle validation error when setting Gym info", async () => {
-      // GIVEN
-      const pokemonInfo = {} as PokemonGym;
-      const consoleStub = stub(console, "log");
-
-      // WHEN
-      await PokemonController.setGymInfo(pokemonInfo).then(() => {
-        // THEN
-        assert.calledWithExactly(consoleStub, "playerInformationList is a required field");
-      });
-
-      consoleStub.restore();
     });
   });
 });

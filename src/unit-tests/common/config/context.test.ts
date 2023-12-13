@@ -26,7 +26,7 @@ describe('Context', () => {
     });
 
     it('should initialize State with Available', () => {
-        expect(Context.STATE).to.equal(PokemonState.AVAILABLE);
+        expect(Context.POKEMON.state).to.equal(PokemonState.AVAILABLE);
     });
 
     it('should initialize Gym State with In Battle', () => {

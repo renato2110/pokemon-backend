@@ -29,7 +29,7 @@ export class PokemonService {
    * Gets the current Pokemon state.
    */
   static getPokemonState(): PokemonState | undefined {
-    return Context.STATE;
+    return Context.POKEMON.state;
   }
 
   /**
@@ -37,7 +37,7 @@ export class PokemonService {
    * @param {PokemonState} state - New Pokemon state.
    */
   static setPokemonState(state: PokemonState): void {
-    Context.STATE = state;
+    Context.POKEMON.state = state;
   }
 
   /**

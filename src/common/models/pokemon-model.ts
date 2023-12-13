@@ -5,6 +5,7 @@ export interface Pokemon {
   life: number;
   attacks?: PokemonAttack[];
   player?: string;
+  state?: PokemonState; 
 }
 
 export interface PokemonAttack {

@@ -5,7 +5,7 @@ import { PokemonGym, PokemonGymState } from "../common/models/gym-model";
 import { PokemonState } from "../common/models/pokemon-model";
 import { PLAYER_NAME } from "../common/constants/pokemon-constants";
 
-export const prefix = "http://localhost:8080/api/gimnasio";
+export const prefix = "http://ec2-3-18-23-121.us-east-2.compute.amazonaws.com:8080/api/gimnasio";
 export const infoPath = `${prefix}/info`;
 export const joinPath = `${prefix}/unirse`;
 export const attackPath = `${prefix}/atacar`;

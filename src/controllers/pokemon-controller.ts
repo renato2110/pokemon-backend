@@ -45,7 +45,6 @@ export class PokemonController {
   static async getPokemonInfo(_req: Request, res: Response) {
     const data = {
       ...PokemonService.getPokemon(),
-      state: PokemonService.getPokemonState(),
       enemies: PokemonService.getPokemonEnemies(),
       gymState: PokemonService.getPokemonGymState()
     }
@@ -67,15 +66,17 @@ export class PokemonController {
       await SavePokemonSchema.validate(req.body, { strict: true });
 
       const state = PokemonService.getPokemonState();
-      if (state !== PokemonState.AVAILABLE) {
+      const gymState = PokemonService.getPokemonGymState();
+      const access = (state === PokemonState.AVAILABLE) || (gymState === PokemonGymState.OVER);
+      if (access) {
+        PokemonService.setPokemon(req.body);
+        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
+      } else {
         PokemonController.logResponse(
           res,
           false,
           `Pokemon attributes cannot be set because it is in a battle.`
         );
-      } else {
-        PokemonService.setPokemon(req.body);
-        PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
       }
     } catch (error: any) {
       PokemonController.logResponse(res, false, error.errors[0] || VALIDATION_ERROR);
@@ -113,9 +114,9 @@ export class PokemonController {
               pokemon,
             });
           })
-          .catch(error => {
-            PokemonController.logResponse(res, false, error.message);
-          });
+            .catch(error => {
+              PokemonController.logResponse(res, false, error.message);
+            });
 
         } else {
           PokemonController.logResponse(res, false, "Pokemon or Attack not valid.");
@@ -133,15 +134,17 @@ export class PokemonController {
    */
   static async joinToBattle(_req: Request, res: Response) {
     const state = PokemonService.getPokemonState();
-    if (state !== PokemonState.AVAILABLE) {
-      PokemonController.logResponse(res, false, `Error joining to battle. Pokemon is: ${state}.`);
-    } else {
+    const gymState = PokemonService.getPokemonGymState();
+    const access = (gymState === PokemonGymState.IN_BATTLE) || (gymState === PokemonGymState.OVER);
+    if (access) {
       APIService.joinGymBattle().then(() => {
         PokemonController.logResponse(res, true, "Pokemon joined to battle successfully.");
       })
-      .catch(error => {
-        PokemonController.logResponse(res, false, error.message);
-      });
+        .catch(error => {
+          PokemonController.logResponse(res, false, error.message);
+        });
+    } else {
+      PokemonController.logResponse(res, false, `Error joining to battle. Pokemon is: ${state}.`);
     }
   }
 
@@ -153,26 +156,21 @@ export class PokemonController {
    * @param {PlayerInformation[]} pokemonGym.playerInformationList - All the information about the enemies.
    */
   static async setGymInfo(pokemonGym: PokemonGym) {
-    try {
-      await SetGymInfoSchema.validate(pokemonGym, { strict: true });
-      PokemonService.setPokemonGymState(pokemonGym.state);
-      const enemies: Pokemon[] = [];
+    PokemonService.setPokemonGymState(pokemonGym.state);
+    PokemonService.setPokemonState(PokemonState.AVAILABLE);
+    const enemies: Pokemon[] = [];
 
-      pokemonGym.playerInformationList.forEach(player => {
-        const pokemon: Pokemon = { ...player.pokemon, player: player.playerName };
-        if (player.playerName === PLAYER_NAME) {
-          PokemonService.setPokemon(pokemon);
-          PokemonService.setPokemonState(player.state);
-        }
-        else {
-          enemies.push(pokemon);
-        }
-      });
+    pokemonGym.playerInformationList.forEach(player => {
+      const pokemon: Pokemon = { ...player.pokemon, player: player.playerName, state: player.state };
+      if (player.playerName === PLAYER_NAME) {
+        PokemonService.setPokemon(pokemon);
+      }
+      else {
+        enemies.push(pokemon);
+      }
+    });
 
-      PokemonService.setPokemonEnemies(enemies);
-    } catch (error: any) {
-      console.log(error.errors[0] || VALIDATION_ERROR);
-    }
+    PokemonService.setPokemonEnemies(enemies);
 
 
   }

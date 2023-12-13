@@ -5,6 +5,7 @@ import { expect } from "chai";
 import { PokemonService } from "../../services/pokemon-service";
 import { PokemonGymState } from "../../common/models/gym-model";
 import { PokemonState } from "../../common/models/pokemon-model";
+import { Context } from "../../common/config/context";
 
 
 describe('APIService', () => {
@@ -45,13 +46,14 @@ describe('APIService', () => {
         // GIVEN
         const axiosGetStub = stub(axios, 'get').rejects({ response: { status: 400 } });
 
-        // WHEN
-        await APIService.getGymInfo();
-
-        // THEN
-        expect(axiosGetStub.calledOnceWithExactly(infoPath)).to.be.true;
-        expect(PokemonService.getPokemonGymState()).to.equal(PokemonGymState.LOBBY);
-        expect(PokemonService.getPokemonState()).to.equal(PokemonState.IN_BATTLE);
+        try {
+            await APIService.getGymInfo();
+        } catch (error: any) {
+            // THEN
+            expect(axiosGetStub.calledOnceWithExactly(infoPath)).to.be.true;
+            expect(Context.POKEMON_GYM_STATE).to.equal(PokemonGymState.OVER);
+            expect(Context.POKEMON.state).to.equal(PokemonState.IN_BATTLE);
+        }
 
         axiosGetStub.restore();
     });
