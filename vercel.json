@@ -9,10 +9,6 @@
     ],
     "routes": [
         {
-          "src": "/.*",
-          "dest": "dist/index.js"
-        },
-        {
           "src": "/pokemon/iniciar",
           "dest": "dist/index.js"
         },
@@ -30,10 +26,6 @@
         },
         {
           "src": "/pokemon/api-docs/(.*)",
-          "dest": "dist/index.js"
-        },
-        {
-          "src": "/(.*)",
           "dest": "dist/index.js"
         }
       ]
