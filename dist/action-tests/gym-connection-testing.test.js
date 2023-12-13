@@ -11,7 +11,7 @@ describe('Gym Connectivity Test', function () {
     it('should successfully connect to the Gym endpoint', () => {
         axios_1.default.get(api_service_1.infoPath)
             .then((response) => {
-            console.log(response);
+            console.log(response.data);
             (0, chai_1.expect)(response.status).to.equal(200);
         })
             .catch((error) => {
