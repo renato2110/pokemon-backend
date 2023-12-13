@@ -324,7 +324,7 @@ describe("PokemonController", () => {
   describe("joinToBattle", () => {
     it("should handle error when the Pokemon is not available", async () => {
       // GIVEN
-      Context.POKEMON.state = PokemonState.IN_BATTLE;
+      Context.POKEMON_GYM_STATE = PokemonGymState.LOBBY;
       const req = {} as Request;
 
       // WHEN
@@ -334,14 +334,14 @@ describe("PokemonController", () => {
           logResponseStub,
           res,
           false,
-          `Error joining to battle. Pokemon is: ${PokemonState.IN_BATTLE}.`
+          `Error joining to battle. Gym is: ${PokemonGymState.LOBBY}.`
         );
       });
     });
 
     it("should set Pokemon state as in battle", async () => {
       // GIVEN
-      Context.POKEMON.state = PokemonState.AVAILABLE;
+      Context.POKEMON_GYM_STATE = PokemonGymState.OVER;
       const req = {} as Request;
       const joinGymBattleMock = stub(APIService, 'joinGymBattle').resolves(true);
 

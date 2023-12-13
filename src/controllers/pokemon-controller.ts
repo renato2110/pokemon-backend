@@ -133,9 +133,8 @@ export class PokemonController {
    * @param {Response} res - Express response object.
    */
   static async joinToBattle(_req: Request, res: Response) {
-    const state = PokemonService.getPokemonState();
     const gymState = PokemonService.getPokemonGymState();
-    const access = (gymState === PokemonGymState.IN_BATTLE) || (gymState === PokemonGymState.OVER);
+    const access = (gymState !== PokemonGymState.LOBBY) && (gymState !== PokemonGymState.IN_BATTLE);
     if (access) {
       APIService.joinGymBattle().then(() => {
         PokemonController.logResponse(res, true, "Pokemon joined to battle successfully.");
@@ -144,7 +143,7 @@ export class PokemonController {
           PokemonController.logResponse(res, false, error.message);
         });
     } else {
-      PokemonController.logResponse(res, false, `Error joining to battle. Pokemon is: ${state}.`);
+      PokemonController.logResponse(res, false, `Error joining to battle. Gym is: ${gymState}.`);
     }
   }
 
