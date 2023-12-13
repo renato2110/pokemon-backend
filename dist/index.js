@@ -35,7 +35,7 @@ const dotenv = __importStar(require("dotenv"));
 const context_1 = require("./common/config/context");
 const api_service_1 = require("./services/api-service");
 var cors = require('cors');
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 dotenv.config();
 const app = (0, express_1.default)();
 exports.app = app;

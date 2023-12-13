@@ -7,7 +7,7 @@ import { Context } from "./common/config/context";
 import { APIService } from "./services/api-service";
 var cors = require('cors')
 
-const PORT = process.env.PORT || 8080;;
+const PORT = process.env.PORT || 3000;
 
 dotenv.config();
 const app = express();
