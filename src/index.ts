@@ -18,7 +18,7 @@ Context.initialize();
 app.use(express.json());
 
 app.get('/', (_req: Request, res: Response) => {
-  return res.send('Express Typescript on Vercel')
+  return res.send('Welcome to Pokemon API');
 });
 
 app.use('/pokemon/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
