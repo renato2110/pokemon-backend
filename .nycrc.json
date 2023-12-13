@@ -7,7 +7,8 @@
         "coverage/**",
         "src/unit-tests/**",
         "src/index.ts",
-        "src/routes/**"
+        "src/routes/**",
+        "src/action-tests/**"
     ],
     "reporter": [
         "text-summary",
