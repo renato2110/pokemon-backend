@@ -39,6 +39,7 @@ export class PokemonController {
    * @param {Response} res - Express response object.
    */
   static async getPokemonInfo(_req: Request, res: Response) {
+    await APIService.getGymInfo();
     const data = {
       ...PokemonService.getPokemon(),
       enemies: PokemonService.getPokemonEnemies(),

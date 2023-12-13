@@ -27,9 +27,6 @@ app.use(PokemonRouter);
 
 app.listen(PORT, () => {
   console.log(`Pokemon Server in now running on: http://localhost:${PORT}`);
-  setInterval(() => {
-    APIService.getGymInfo();
-  }, 3000);
 });
 
 export { app };

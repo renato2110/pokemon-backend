@@ -35,6 +35,7 @@ class PokemonController {
      * @param {Response} res - Express response object.
      */
     static async getPokemonInfo(_req, res) {
+        await api_service_1.APIService.getGymInfo();
         const data = {
             ...pokemon_service_1.PokemonService.getPokemon(),
             enemies: pokemon_service_1.PokemonService.getPokemonEnemies(),

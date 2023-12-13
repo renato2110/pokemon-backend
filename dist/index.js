@@ -33,7 +33,6 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_json_1 = __importDefault(require("./routes/swagger.json"));
 const dotenv = __importStar(require("dotenv"));
 const context_1 = require("./common/config/context");
-const api_service_1 = require("./services/api-service");
 var cors = require('cors');
 const PORT = process.env.PORT || 3000;
 dotenv.config();
@@ -49,7 +48,4 @@ app.use('/pokemon/api-docs', swagger_ui_express_1.default.serve, swagger_ui_expr
 app.use(router_1.router);
 app.listen(PORT, () => {
     console.log(`Pokemon Server in now running on: http://localhost:${PORT}`);
-    setInterval(() => {
-        api_service_1.APIService.getGymInfo();
-    }, 3000);
 });
