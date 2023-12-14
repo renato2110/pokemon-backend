@@ -1,0 +1,4 @@
+(12/13/2023, 6:38:03 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(12/13/2023, 6:38:03 PM) RESPONSE: {"status":"success","message":"","data":{"name":"Sin nombre","type":"normal","life":0,"attacks":[],"player":"Renato","state":"DISPONIBLE","enemies":[],"gymState":"EN_BATALLA"}}
+(12/13/2023, 6:38:05 PM) REQUEST: {"url":"/pokemon/info","method":"GET","params":{}}
+(12/13/2023, 6:38:05 PM) RESPONSE: {"status":"success","message":"","data":{"name":"Sin nombre","type":"normal","life":0,"attacks":[],"player":"Renato","state":"DISPONIBLE","enemies":[{"name":"personitaPoke","type":"normal","life":900,"attacks":[{"type":"normal","power":100}],"player":"isra","state":"EN_BATALLA"},{"name":"Psyduck","type":"agua","life":200,"attacks":[{"type":"agua","power":100}],"player":"Yosh4","state":"EN_BATALLA"},{"name":"charmander","type":"fuego","life":400,"attacks":[{"type":"fuego","power":100}],"player":"ulises","state":"EN_BATALLA"}],"gymState":"LOBBY"}}

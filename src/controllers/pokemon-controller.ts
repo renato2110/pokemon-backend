@@ -64,7 +64,7 @@ export class PokemonController {
 
       const state = PokemonService.getPokemonState();
       const gymState = PokemonService.getPokemonGymState();
-      const access = (state === PokemonState.AVAILABLE) || (gymState === PokemonGymState.OVER);
+      const access = (state === PokemonState.AVAILABLE) || (gymState === PokemonGymState.OVER) || (gymState === PokemonGymState.LOBBY);
       if (access) {
         PokemonService.setPokemon(req.body);
         PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);

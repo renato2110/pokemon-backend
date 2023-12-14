@@ -58,7 +58,7 @@ class PokemonController {
             await pokemon_validator_1.SavePokemonSchema.validate(req.body, { strict: true });
             const state = pokemon_service_1.PokemonService.getPokemonState();
             const gymState = pokemon_service_1.PokemonService.getPokemonGymState();
-            const access = (state === pokemon_model_1.PokemonState.AVAILABLE) || (gymState === gym_model_1.PokemonGymState.OVER);
+            const access = (state === pokemon_model_1.PokemonState.AVAILABLE) || (gymState === gym_model_1.PokemonGymState.OVER) || (gymState === gym_model_1.PokemonGymState.LOBBY);
             if (access) {
                 pokemon_service_1.PokemonService.setPokemon(req.body);
                 PokemonController.logResponse(res, true, `${req.body.name} attributes set successfully.`);
