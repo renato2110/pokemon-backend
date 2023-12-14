@@ -117,7 +117,7 @@ class PokemonController {
      */
     static async joinToBattle(_req, res) {
         const gymState = pokemon_service_1.PokemonService.getPokemonGymState();
-        const access = (gymState !== gym_model_1.PokemonGymState.LOBBY) && (gymState !== gym_model_1.PokemonGymState.IN_BATTLE);
+        const access = (gymState === gym_model_1.PokemonGymState.LOBBY) || (gymState === gym_model_1.PokemonGymState.OVER);
         if (access) {
             api_service_1.APIService.joinGymBattle().then(() => {
                 PokemonController.logResponse(res, true, "Pokemon joined to battle successfully.");
